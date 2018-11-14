@@ -4,34 +4,65 @@ const Schema = mongoose.Schema;
 const UserSchema = new mongoose.Schema({
   name: String,
   email: String,
-  password: {type: String, unique: true, required: true},
-  previously_check_in:  { type: mongoose.Schema.Types.ObjectId, ref: 'check_in'}
+  password: {
+    type: String,
+    unique: true,
+    required: true
+  },
+  previously_check_in: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'check_in'
+  }
 });
 
 const CheckInSchema = new mongoose.Schema({
-  spot: { type: mongoose.Schema.Types.ObjectId, ref: 'place'},
+  spot: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'place'
+  },
   time: Date,
-  tip: { type: mongoose.Schema.Types.ObjectId, ref: 'tip'},
-  rating: { type: mongoose.Schema.Types.ObjectId, ref: 'rating'},
+  tip: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'tip'
+  },
+  rating: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'rating'
+  },
 });
 
 const PlaceSchema = new mongoose.Schema({
   name: String,
   address: String,
   category: String,
-  ratings: [ { type: mongoose.Schema.Types.ObjectId, ref: 'rating'} ],
-  tips: [ { type: mongoose.Schema.Types.ObjectId, ref: 'tip'} ],
-  check_ins: [ { type: mongoose.Schema.Types.ObjectId, ref: 'check_in'} ],
+  ratings: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'rating'
+  }],
+  tips: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'tip'
+  }],
+  check_ins: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'check_in'
+  }],
 });
 
 const TipSchema = new mongoose.Schema({
   comment: String,
-  tipper: { type: mongoose.Schema.Types.ObjectId, ref: 'user' },
+  tipper: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'user'
+  },
 });
 
 const RatingSchema = new mongoose.Schema({
-  like: Number, 
-  rater: { type: mongoose.Schema.Types.ObjectId, ref: 'user' },
+  like: Number,
+  rater: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'user'
+  },
 });
 
 mongoose.model('User', UserSchema);
@@ -40,4 +71,6 @@ mongoose.model('Place', PlaceSchema);
 mongoose.model('Tip', TipSchema);
 mongoose.model('Rating', RatingSchema);
 
-mongoose.connect('mongodb://localhost:27017/large-scale-project', { useNewUrlParser: true });
+mongoose.connect('mongodb://localhost:27017/large-scale-project', {
+  useNewUrlParser: true
+});
