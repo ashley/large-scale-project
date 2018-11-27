@@ -9,10 +9,16 @@ const Place = mongoose.model('Place');
 const Tip = mongoose.model('Tip');
 const Rating = mongoose.model('Rating');
 
+const googleMapsClient = require('@google/maps').createClient({
+  key: 'your API key here'
+});
+
+// Front-End Wiring
 app.set('view engine', 'ejs');
 app.use(express.static(path.join(__dirname, 'public')));
 app.set('views', path.join(__dirname, 'views'));
 
+// Routing
 app.get('/', (req, res) => {
   res.render('index');
 });
