@@ -4,3 +4,17 @@
   <li>Public Bathrooms</li>
   <li>Quiet Places</li>
 </ul>
+
+<% if(spots) {%>
+  <ul>
+    <% for(var i=0; i<spots.length; i++) { %>
+      <li><%= spots[i].name %></li>
+    <% } %> 
+  </ul>
+<% } %>
+
+<% if(user) {%>
+  <div>
+    Username: <%=user.name%>
+  </div>
+<% } %>

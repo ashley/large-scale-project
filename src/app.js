@@ -20,7 +20,11 @@ app.set('views', path.join(__dirname, 'views'));
 
 // Routing
 app.get('/', (req, res) => {
-  res.render('index');
+  res.render('index', {user: {name: 'ashley'}, spots: [{name: 'a'}, {name: 'b'}]});
+});
+
+app.get('/check-in', (req, res) => {
+  res.render('checkin');
 });
 
 app.listen(3000, function () {
