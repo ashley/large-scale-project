@@ -27,6 +27,10 @@ app.get('/check-in', (req, res) => {
   res.render('checkin');
 });
 
+app.post('/check-in', (req, res) => {
+  res.redirect('/');
+});
+
 app.listen(3000, function () {
   console.log("Running server on localhost:3000");
 });
