@@ -10,9 +10,11 @@
   "license": "ISC",
   "dependencies": {
     "@google/maps": "^0.5.5",
+    "body-parser": "^1.18.3",
     "ejs": "^2.6.1",
     "express": "^4.16.4",
     "mongoose": "^5.3.12",
+    "negotiator": "^0.6.1",
     "npm": "^6.4.1"
   }
 }
