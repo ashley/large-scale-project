@@ -3,6 +3,8 @@ const mongoose = require('mongoose');
 const path = require('path');
 require('./db');
 const app = express();
+
+// MongoDB Objects
 const User = mongoose.model('User');
 const CheckIn = mongoose.model('CheckIn');
 const Place = mongoose.model('Place');
@@ -20,15 +22,33 @@ app.set('views', path.join(__dirname, 'views'));
 
 // Routing
 app.get('/', (req, res) => {
+  // load spots
+  // Add them to an array
   res.render('index', {user: {name: 'ashley'}, spots: [{name: 'a'}, {name: 'b'}]});
 });
 
 app.get('/check-in', (req, res) => {
+
   res.render('checkin');
 });
 
 app.post('/check-in', (req, res) => {
-  res.redirect('/');
+  Place.find().or([{ name: place_name, address: place_address}])
+    .then(place => {
+      const spot = new Spot({
+        spot: req.body.place,
+        time: req.body.time,
+        tip: req.body.tip || "",
+        rating: req.body.rating || ""
+      })
+      place.save(function(err){
+        if(err) throw err;
+          res.redirect('/');
+      });
+    })
+    .catch(err => {
+      throw err;
+    });
 });
 
 app.listen(3000, function () {
