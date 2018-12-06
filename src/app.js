@@ -22,9 +22,20 @@ app.set('views', path.join(__dirname, 'views'));
 
 // Routing
 app.get('/', (req, res) => {
+  const place = new Place({name: "bar"});
+  place.save(function(err){
+    if (err) throw err;
+    console.log('saved');
+  });
   // load spots
-  // Add them to an array
-  res.render('index', {user: {name: 'ashley'}, spots: [{name: 'a'}, {name: 'b'}]});
+  Place.find({}, (err, places, count) => {
+    if(places){
+      res.render('index', {user: {name: 'ashley'}, spots: places});
+    }
+    if(err){
+      throw err; //for now 
+    }
+  })
 });
 
 app.get('/check-in', (req, res) => {
@@ -33,18 +44,47 @@ app.get('/check-in', (req, res) => {
 });
 
 app.post('/check-in', (req, res) => {
-  Place.find().or([{ name: place_name, address: place_address}])
+  Place.findOne({ name: place_name, address: place_address})
     .then(place => {
-      const spot = new Spot({
-        spot: req.body.place,
-        time: req.body.time,
-        tip: req.body.tip || "",
-        rating: req.body.rating || ""
-      })
-      place.save(function(err){
-        if(err) throw err;
-          res.redirect('/');
-      });
+      // Check is the place exist
+      if (place) {
+        const checkin = new CheckIn({
+          spot: place,
+          time: req.body.time,
+          tip: req.body.tip || "",
+          rating: req.body.rating || ""
+        })
+        place.check_ins.push(checkin);
+        checkin.save(function(err){
+          if(err) throw err;
+            res.redirect('/');
+        });
+      }
+      else{
+        // Place is not found
+        const place = new Place({
+          name: place.name,
+          address: place.address,
+          category: "test",
+          ratings: [],
+          tips: [],
+          check_ins: []
+        });
+        place.save(function(err){
+          if(err) throw err;
+          const checkin = new CheckIn({
+            spot: place,
+            time: req.body.time,
+            tip: req.body.tip || "",
+            rating: req.body.rating || ""
+          })
+          place.check_ins.push(checkin);
+          checkin.save(function(err){
+            if(err) throw err;
+              res.redirect('/');
+          });
+        });
+      }
     })
     .catch(err => {
       throw err;
