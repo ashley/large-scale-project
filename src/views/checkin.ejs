@@ -117,6 +117,8 @@
     <form method="POST" action="">
       Place Name:
       <input type="text" name="place">
+      <div>Your Chosen Place:</div>
+      <div id='placeName'></div>
       <br>
       What kind of spot is this?<br>
       <input type="checkbox" name="wifi"> Wifi<br>
@@ -177,7 +179,9 @@
             marker.setMap(null);
           });
           markers = [];
-
+          
+          let firstPlace = places[0];
+          document.getElementById("placeName").innerHTML = 'Name: ' + firstPlace.name + ' \nAddress: '+firstPlace.formatted_address ;
           // For each place, get the icon, name and location.
           var bounds = new google.maps.LatLngBounds();
           places.forEach(function(place) {
