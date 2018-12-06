@@ -71,6 +71,7 @@ mongoose.model('Place', PlaceSchema);
 mongoose.model('Tip', TipSchema);
 mongoose.model('Rating', RatingSchema);
 
-mongoose.connect('mongodb://localhost:27017/large-scale-project', {
-  useNewUrlParser: true
+mongoose.connect('mongodb://localhost:27017/large-scale-project', function (err) {
+  if (err) throw err;
+  console.log('Connected to MongoDB');
 });
