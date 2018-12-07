@@ -34,6 +34,9 @@ const CheckInSchema = new mongoose.Schema({
 const PlaceSchema = new mongoose.Schema({
   name: String,
   address: String,
+  place_id: String,
+  lat: Number,
+  lng: Number,
   category: String,
   ratings: [{
     type: mongoose.Schema.Types.ObjectId,
