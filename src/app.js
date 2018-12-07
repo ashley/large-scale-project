@@ -50,52 +50,68 @@ app.get('/check-in', (req, res) => {
 
 app.post('/check-in', (req, res) => {
   console.log('req.body: ', req.body);
-  // res.redirect('/');
-  // Place.findOne({ name: place_name, address: place_address})
-  //   .then(place => {
-  //     // Check is the place exist
-  //     if (place) {
-  //       const checkin = new CheckIn({
-  //         spot: place,
-  //         time: req.body.time,
-  //         tip: req.body.tip || "",
-  //         rating: req.body.rating || ""
-  //       })
-  //       place.check_ins.push(checkin);
-  //       checkin.save(function(err){
-  //         if(err) throw err;
-  //           res.redirect('/');
-  //       });
-  //     }
-  //     else{
-  //       // Place is not found
-  //       const place = new Place({
-  //         name: inputName,
-  //         address: inputAddress,
-  //         category: "test",
-  //         ratings: [],
-  //         tips: [],
-  //         check_ins: []
-  //       });
-  //       place.save(function(err){
-  //         if(err) throw err;
-  //         const checkin = new CheckIn({
-  //           spot: place,
-  //           time: req.body.time,
-  //           tip: req.body.tip || "",
-  //           rating: req.body.rating || ""
-  //         })
-  //         place.check_ins.push(checkin);
-  //         checkin.save(function(err){
-  //           if(err) throw err;
-  //             res.redirect('/');
-  //         });
-  //       });
-  //     }
-  //   })
-  //   .catch(err => {
-  //     throw err;
-  //   });
+  let time = new Date();
+  //res.redirect('/');
+  Place.findOne({place_id: req.body.placeGoogleId})
+    .then(place => {
+      // Check is the place exist
+      if (place) {
+        // const checkin = new CheckIn({
+        //   spot: place,
+        //   time: time,
+        //   tip: req.body.tip || "",
+        //   rating: req.body.rating || ""
+        // })
+        const checkin = new CheckIn({
+          spot: "p",
+          time: "time",
+          tip: req.body.tip || "",
+          rating: req.body.rating || ""
+        })
+        place.check_in.push(checkin);
+        checkin.save(function(err){
+          if(err) throw err;
+            res.redirect('/');
+        });
+      }
+      else{
+        // Place is not found
+        const place = new Place({
+          name: req.body.placeName,
+          address: req.body.placeAddress,
+          place_id: req.body.placeGoogleId,
+          lat: req.body.placeLat,
+          lng: req.body.placeLong,
+          category: "test",
+          ratings: [],
+          tips: [],
+          check_ins: []
+        });
+        place.save(function(err){
+          if(err) throw err;
+          // const checkin = new CheckIn({
+          //   spot: place,
+          //   time: time,
+          //   tip: req.body.tip || "",
+          //   rating: req.body.rating || ""
+          // })
+          const checkin = new CheckIn({
+            spot: "place",
+            time: "time",
+            tip: req.body.tip || "",
+            rating: req.body.rating || ""
+          })
+          place.check_in.push(checkin);
+          checkin.save(function(err){
+            if(err) throw err;
+              res.redirect('/');
+          });
+        });
+      }
+    })
+    .catch(err => {
+      throw err;
+    });
 });
 
 app.listen(3000, function () {
