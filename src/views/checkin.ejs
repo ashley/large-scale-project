@@ -134,8 +134,8 @@
       Tip:
       <input type="text" name="tip">
       <br><br>
-      <input type="submit" value="Submit">
-    </form> 
+      <input type="submit" id="submitButton" value="Submit">
+    </form>
     <script>
       // This example adds a search box to a map, using the Google Place Autocomplete
       // feature. People can enter geographical searches. The search box will return a
@@ -144,13 +144,37 @@
       // This example requires the Places library. Include the libraries=places
       // parameter when you first load the API. For example:
       // <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places">
+      let firstPlace;
+
+      function geocodeAddress(geocoder, resultsMap) {
+        let address = firstPlace.formatted_address;
+        geocoder.geocode({'address': address}, function(results, status) {
+          if (status === 'OK') {
+            console.log(results[0]);
+            let position = results[0].geometry.location;
+            resultsMap.setCenter(position);
+            var marker = new google.maps.Marker({
+              map: resultsMap,
+              position: position
+            });
+            console.log("Submitted new place at (" + position.lat + "," + position.lng + ")");
+          } else {
+            alert('Geocode was not successful for the following reason: ' + status);
+          }
+        });
+      }
 
       function initAutocomplete() {
-        var map = new google.maps.Map(document.getElementById('map'), {
+        let map = new google.maps.Map(document.getElementById('map'), {
           //center: {lat: -33.8688, lng: 151.2195},
           center: {lat: 40.730610, lng: -73.935242},
           zoom: 12,
           mapTypeId: 'roadmap'
+        });
+
+        let geocoder = new google.maps.Geocoder();
+        document.getElementById('submitButton').addEventListener('click', function() {
+          geocodeAddress(geocoder, map);
         });
 
         // Create the search box and link it to the UI element.
@@ -179,9 +203,9 @@
             marker.setMap(null);
           });
           markers = [];
-          
-          let firstPlace = places[0];
-          document.getElementById("placeName").innerHTML = 'Name: ' + firstPlace.name + ' \nAddress: '+firstPlace.formatted_address ;
+
+          firstPlace = places[0];
+          document.getElementById("placeName").innerHTML = 'Name: ' + firstPlace.name + ' \nAddress: '+ firstPlace.formatted_address ;
           // For each place, get the icon, name and location.
           var bounds = new google.maps.LatLngBounds();
           places.forEach(function(place) {
