@@ -2,11 +2,12 @@ const express = require('express');
 const mongoose = require('mongoose');
 const path = require('path');
 const bodyParser = require('body-parser');
-require('./db');
+const db = require('./db');
+const UserFactory = require('./script/sanitize_users.js');
 const app = express();
 
 // MongoDB Objects
-const User = mongoose.model('User');
+const User = mongoose.model('User')
 const CheckIn = mongoose.model('CheckIn');
 const Place = mongoose.model('Place');
 const Tip = mongoose.model('Tip');
@@ -49,7 +50,6 @@ app.get('/check-in', (req, res) => {
 });
 
 app.post('/check-in', (req, res) => {
-  console.log('req.body: ', req.body);
   let time = new Date();
   //res.redirect('/');
   Place.findOne({place_id: req.body.placeGoogleId})
@@ -63,15 +63,19 @@ app.post('/check-in', (req, res) => {
         //   rating: req.body.rating || ""
         // })
         const checkin = new CheckIn({
-          spot: "p",
-          time: "time",
-          tip: req.body.tip || "",
-          rating: req.body.rating || ""
+          spot: null,
+          time: null,
+          tip: req.body.tip || null,
+          rating: req.body.rating || null
         })
-        place.check_in.push(checkin);
-        checkin.save(function(err){
+        console.log(place);
+        place.check_ins.push(checkin);
+        place.save(function(err){
           if(err) throw err;
-            res.redirect('/');
+            checkin.save(function(err){
+              if(err) throw err;
+              res.redirect('/');
+            })
         });
       }
       else{
@@ -89,17 +93,11 @@ app.post('/check-in', (req, res) => {
         });
         place.save(function(err){
           if(err) throw err;
-          // const checkin = new CheckIn({
-          //   spot: place,
-          //   time: time,
-          //   tip: req.body.tip || "",
-          //   rating: req.body.rating || ""
-          // })
           const checkin = new CheckIn({
-            spot: "place",
-            time: "time",
-            tip: req.body.tip || "",
-            rating: req.body.rating || ""
+            spot: null,
+            time: null,
+            tip: null,
+            rating: null
           })
           place.check_in.push(checkin);
           checkin.save(function(err){
@@ -116,4 +114,5 @@ app.post('/check-in', (req, res) => {
 
 app.listen(3000, function () {
   console.log("Running server on localhost:3000");
+  UserFactory(2);
 });
