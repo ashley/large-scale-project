@@ -6,7 +6,6 @@ const UserSchema = new mongoose.Schema({
   email: String,
   password: {
     type: String,
-    unique: true,
     required: true
   },
   previously_check_in: {

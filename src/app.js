@@ -2,11 +2,12 @@ const express = require('express');
 const mongoose = require('mongoose');
 const path = require('path');
 const bodyParser = require('body-parser');
-require('./db');
+const db = require('./db');
+const UserFactory = require('./script/sanitize_users.js');
 const app = express();
 
 // MongoDB Objects
-const User = mongoose.model('User');
+const User = mongoose.model('User')
 const CheckIn = mongoose.model('CheckIn');
 const Place = mongoose.model('Place');
 const Tip = mongoose.model('Tip');
@@ -113,4 +114,5 @@ app.post('/check-in', (req, res) => {
 
 app.listen(3000, function () {
   console.log("Running server on localhost:3000");
+  UserFactory(2);
 });
