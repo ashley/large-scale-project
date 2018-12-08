@@ -42,6 +42,22 @@
         outline: none;
         border: none;
       }
+
+      #placeGoogleId {
+        display: none;
+        outline: none;
+        border: none;
+      }
+      #placeLat {
+        display: none;
+        outline: none;
+        border: none;
+      }
+      #placeLong {
+        display: none;
+        outline: none;
+        border: none;
+      }
       #map {
         height: 60%;
       }
@@ -133,6 +149,9 @@
       <div id='placeAddress'></div>
       <input type="text" name='placeAddress' id="placeAddressInput">
       <br>
+      <input type="text" name='placeGoogleId' id="placeGoogleId" readonly="">
+      <input type="text" name='placeLat' id="placeLat" readonly="">
+      <input type="text" name='placeLong' id="placeLong" readonly="">
       What kind of spot is this?<br>
       <input type="checkbox" name="wifi"> Wifi<br>
       <input type="checkbox" name="bathroom"> Public Bathroom<br>
@@ -177,6 +196,10 @@
             console.log(string)
             console.log(obj)
             console.log(obj.lat)
+            console.log('firstplacce print: ', firstPlace)
+            document.getElementById("placeGoogleId").setAttribute('value', firstPlace.place_id);
+            document.getElementById("placeLat").setAttribute('value', obj.lat);
+            document.getElementById("placeLong").setAttribute('value', obj.lng);
 
 
           } else {
@@ -193,10 +216,10 @@
           mapTypeId: 'roadmap'
         });
 
-        let geocoder = new google.maps.Geocoder();
-        document.getElementById('submitButton').addEventListener('click', function() {
-          geocodeAddress(geocoder, map);
-        });
+        // let geocoder = new google.maps.Geocoder();
+        // document.getElementById('submitButton').addEventListener('click', function() {
+        //   geocodeAddress(geocoder, map);
+        // });
 
         // Create the search box and link it to the UI element.
         var input = document.getElementById('pac-input');
@@ -236,6 +259,10 @@
           document.getElementById("placeAddressInput").setAttribute('value', firstPlace.formatted_address);
           document.getElementById("placeAddressInput").setAttribute('readonly', "");
           document.getElementById("placeAddressInput").style.display = "block";
+          
+          let geocoder = new google.maps.Geocoder();
+          geocodeAddress(geocoder, map);
+          
           // For each place, get the icon, name and location.
           var bounds = new google.maps.LatLngBounds();
           places.forEach(function(place) {
