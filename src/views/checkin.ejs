@@ -30,6 +30,34 @@
     <style>
       /* Always set the map height explicitly to define the size of the div
        * element that contains the map. */
+      #placeNameInput {
+        display: none;
+        width: 600px;
+        outline: none;
+        border: none;
+      }
+      #placeAddressInput {
+        display: none;
+        width: 600px;
+        outline: none;
+        border: none;
+      }
+
+      #placeGoogleId {
+        display: none;
+        outline: none;
+        border: none;
+      }
+      #placeLat {
+        display: none;
+        outline: none;
+        border: none;
+      }
+      #placeLong {
+        display: none;
+        outline: none;
+        border: none;
+      }
       #map {
         height: 60%;
       }
@@ -115,11 +143,15 @@
     <input id="pac-input" class="controls" type="text" placeholder="Search Box">
     <div id="map"></div>
     <form method="POST" action="">
-      Place Name:
-      <input type="text" name="place">
-      <div>Your Chosen Place:</div>
       <div id='placeName'></div>
+      <input type="text" name='placeName' id="placeNameInput">
       <br>
+      <div id='placeAddress'></div>
+      <input type="text" name='placeAddress' id="placeAddressInput">
+      <br>
+      <input type="text" name='placeGoogleId' id="placeGoogleId" readonly="">
+      <input type="text" name='placeLat' id="placeLat" readonly="">
+      <input type="text" name='placeLong' id="placeLong" readonly="">
       What kind of spot is this?<br>
       <input type="checkbox" name="wifi"> Wifi<br>
       <input type="checkbox" name="bathroom"> Public Bathroom<br>
@@ -148,7 +180,16 @@
 
       function updatePlace(place) {
         firstPlace = place;
-        document.getElementById("placeName").innerHTML = 'Name: ' + firstPlace.name + ' \nAddress: '+ firstPlace.formatted_address ;
+        
+        document.getElementById("placeName").innerHTML = 'Your Chosen Place Name: '
+        document.getElementById("placeNameInput").setAttribute('value', firstPlace.name);
+        document.getElementById("placeNameInput").setAttribute('readonly', "");
+        document.getElementById("placeNameInput").style.display = "block";
+
+        document.getElementById("placeAddress").innerHTML = 'Your Chosen Place Address: '
+        document.getElementById("placeAddressInput").setAttribute('value', firstPlace.formatted_address);
+        document.getElementById("placeAddressInput").setAttribute('readonly', "");
+        document.getElementById("placeAddressInput").style.display = "block";
       }
 
       function geocodeAddress(geocoder, resultsMap) {
@@ -172,8 +213,14 @@
 
             let string = JSON.stringify(position)
             let obj = JSON.parse(string)
-            console.log(obj);
-            console.log("Submitted new place at (" + position.lat + "," + position.lng + ")");
+
+            console.log(string)
+            console.log(obj)
+            console.log(obj.lat)
+            console.log('firstplacce print: ', firstPlace)
+            document.getElementById("placeGoogleId").setAttribute('value', firstPlace.place_id);
+            document.getElementById("placeLat").setAttribute('value', obj.lat);
+            document.getElementById("placeLong").setAttribute('value', obj.lng);
           } else {
             alert('Geocode was not successful for the following reason: ' + JSON.stringify(status));
           }
@@ -188,10 +235,10 @@
           mapTypeId: 'roadmap'
         });
 
-        let geocoder = new google.maps.Geocoder();
-        document.getElementById('submitButton').addEventListener('click', function() {
-          geocodeAddress(geocoder, map);
-        });
+        // let geocoder = new google.maps.Geocoder();
+        // document.getElementById('submitButton').addEventListener('click', function() {
+        //   geocodeAddress(geocoder, map);
+        // });
 
         // Create the search box and link it to the UI element.
         var input = document.getElementById('pac-input');
@@ -220,7 +267,12 @@
           });
           markers = [];
 
-          updatePlace(places[0]);
+
+          //document.getElementById("placeName").innerHTML = 'Name: ' + firstPlace.name + ' \nAddress: '+ firstPlace.formatted_address ;
+          
+          let geocoder = new google.maps.Geocoder();
+          geocodeAddress(geocoder, map);
+          
           // For each place, get the icon, name and location.
           var bounds = new google.maps.LatLngBounds();
           places.forEach(function(place) {
