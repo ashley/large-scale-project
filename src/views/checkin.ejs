@@ -178,6 +178,20 @@
       // <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places">
       let firstPlace;
 
+      function updatePlace(place) {
+        firstPlace = place;
+
+        document.getElementById("placeName").innerHTML = 'Your Chosen Place Name: '
+        document.getElementById("placeNameInput").setAttribute('value', firstPlace.name);
+        document.getElementById("placeNameInput").setAttribute('readonly', "");
+        document.getElementById("placeNameInput").style.display = "block";
+
+        document.getElementById("placeAddress").innerHTML = 'Your Chosen Place Address: '
+        document.getElementById("placeAddressInput").setAttribute('value', firstPlace.formatted_address);
+        document.getElementById("placeAddressInput").setAttribute('readonly', "");
+        document.getElementById("placeAddressInput").style.display = "block";
+      }
+
       function geocodeAddress(geocoder, resultsMap) {
         let address = firstPlace.formatted_address;
         geocoder.geocode({'address': address}, function(results, status) {
@@ -185,14 +199,21 @@
             console.log('results: ', results[0]);
             let position = results[0].geometry.location;
             resultsMap.setCenter(position);
-            var marker = new google.maps.Marker({
+            let marker = new google.maps.Marker({
               map: resultsMap,
               position: position
             });
 
-            
+            let infowindow = new google.maps.InfoWindow({
+              content: firstPlace.name
+            });
+            marker.addListener('click', function() {
+              infowindow.open(resultsMap, marker);
+            });
+
             let string = JSON.stringify(position)
             let obj = JSON.parse(string)
+
             console.log(string)
             console.log(obj)
             console.log(obj.lat)
@@ -200,8 +221,6 @@
             document.getElementById("placeGoogleId").setAttribute('value', firstPlace.place_id);
             document.getElementById("placeLat").setAttribute('value', obj.lat);
             document.getElementById("placeLong").setAttribute('value', obj.lng);
-
-
           } else {
             alert('Geocode was not successful for the following reason: ' + JSON.stringify(status));
           }
@@ -211,8 +230,8 @@
       function initAutocomplete() {
         let map = new google.maps.Map(document.getElementById('map'), {
           //center: {lat: -33.8688, lng: 151.2195},
-          center: {lat: 40.730610, lng: -73.935242},
-          zoom: 12,
+          center: {lat: 40.7308, lng: -73.9973},
+          zoom: 15,
           mapTypeId: 'roadmap'
         });
 
@@ -248,21 +267,12 @@
           });
           markers = [];
 
-          firstPlace = places[0];
-          //document.getElementById("placeName").innerHTML = 'Name: ' + firstPlace.name + ' \nAddress: '+ firstPlace.formatted_address ;
-          document.getElementById("placeName").innerHTML = 'Your Chosen Place Name: '
-          document.getElementById("placeNameInput").setAttribute('value', firstPlace.name);
-          document.getElementById("placeNameInput").setAttribute('readonly', "");
-          document.getElementById("placeNameInput").style.display = "block";
 
-          document.getElementById("placeAddress").innerHTML = 'Your Chosen Place Address: '
-          document.getElementById("placeAddressInput").setAttribute('value', firstPlace.formatted_address);
-          document.getElementById("placeAddressInput").setAttribute('readonly', "");
-          document.getElementById("placeAddressInput").style.display = "block";
-          
+          //document.getElementById("placeName").innerHTML = 'Name: ' + firstPlace.name + ' \nAddress: '+ firstPlace.formatted_address ;
+          updatePlace(places[0]);
           let geocoder = new google.maps.Geocoder();
           geocodeAddress(geocoder, map);
-          
+
           // For each place, get the icon, name and location.
           var bounds = new google.maps.LatLngBounds();
           places.forEach(function(place) {
@@ -270,6 +280,7 @@
               console.log("Returned place contains no geometry");
               return;
             }
+
             var icon = {
               url: place.icon,
               size: new google.maps.Size(71, 71),
@@ -278,13 +289,23 @@
               scaledSize: new google.maps.Size(25, 25)
             };
 
-            // Create a marker for each place.
-            markers.push(new google.maps.Marker({
+            let marker = new google.maps.Marker({
               map: map,
               icon: icon,
               title: place.name,
               position: place.geometry.location
-            }));
+            });
+
+            let infowindow = new google.maps.InfoWindow({
+              content: place.name + "<br>" + place.formatted_address
+            });
+            marker.addListener('click', function() {
+              infowindow.open(map, marker);
+              updatePlace(place);
+            });
+
+            // Create a marker for each place.
+            markers.push(marker);
 
             if (place.geometry.viewport) {
               // Only geocodes have viewport.
