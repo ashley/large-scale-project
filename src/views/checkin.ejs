@@ -180,7 +180,7 @@
 
       function updatePlace(place) {
         firstPlace = place;
-        
+
         document.getElementById("placeName").innerHTML = 'Your Chosen Place Name: '
         document.getElementById("placeNameInput").setAttribute('value', firstPlace.name);
         document.getElementById("placeNameInput").setAttribute('readonly', "");
@@ -269,10 +269,10 @@
 
 
           //document.getElementById("placeName").innerHTML = 'Name: ' + firstPlace.name + ' \nAddress: '+ firstPlace.formatted_address ;
-          
+          updatePlace(places[0]);
           let geocoder = new google.maps.Geocoder();
           geocodeAddress(geocoder, map);
-          
+
           // For each place, get the icon, name and location.
           var bounds = new google.maps.LatLngBounds();
           places.forEach(function(place) {
