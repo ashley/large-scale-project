@@ -199,17 +199,17 @@
             console.log('results: ', results[0]);
             let position = results[0].geometry.location;
             resultsMap.setCenter(position);
-            let marker = new google.maps.Marker({
-              map: resultsMap,
-              position: position
-            });
-
-            let infowindow = new google.maps.InfoWindow({
-              content: firstPlace.name
-            });
-            marker.addListener('click', function() {
-              infowindow.open(resultsMap, marker);
-            });
+            // let marker = new google.maps.Marker({
+            //   map: resultsMap,
+            //   position: position
+            // });
+            //
+            // let infowindow = new google.maps.InfoWindow({
+            //   content: firstPlace.name
+            // });
+            // marker.addListener('click', function() {
+            //   infowindow.open(resultsMap, marker);
+            // });
 
             let string = JSON.stringify(position)
             let obj = JSON.parse(string)
@@ -217,7 +217,7 @@
             console.log(string)
             console.log(obj)
             console.log(obj.lat)
-            console.log('firstplacce print: ', firstPlace)
+            console.log('firstplace print: ', firstPlace)
             document.getElementById("placeGoogleId").setAttribute('value', firstPlace.place_id);
             document.getElementById("placeLat").setAttribute('value', obj.lat);
             document.getElementById("placeLong").setAttribute('value', obj.lng);
@@ -250,7 +250,7 @@
           searchBox.setBounds(map.getBounds());
         });
 
-        var markers = [];
+        let markers = [];
         // Listen for the event fired when the user selects a prediction and retrieve
         // more details for that place.
         searchBox.addListener('places_changed', function() {
@@ -299,10 +299,18 @@
             let infowindow = new google.maps.InfoWindow({
               content: place.name + "<br>" + place.formatted_address
             });
+
             marker.addListener('click', function() {
-              infowindow.open(map, marker);
               updatePlace(place);
             });
+
+            marker.addListener('mouseover', function() {
+              infowindow.open(map, marker);
+            });
+
+            marker.addListener('mouseout', function() {
+              infowindow.close();
+            })
 
             // Create a marker for each place.
             markers.push(marker);
