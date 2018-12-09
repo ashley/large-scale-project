@@ -174,13 +174,10 @@
       <br><br>
       <input type="submit" id="submitButton" value="Submit">
     </form>
-    <% if(spots) {%>
-      <ul>
-        <% for(var i=0; i<spots.length; i++) { %>
-          <li><%= spots[i].name %></li>
-        <% } %>
-      </ul>
-    <% } %>
+    Tips: <br>
+    <div id="tipList">
+      You haven't selected a place yet.
+    </div>
     <script>
       // This example adds a search box to a map, using the Google Place Autocomplete
       // feature. People can enter geographical searches. The search box will return a
@@ -230,6 +227,13 @@
         document.getElementById("placeAddressInput").setAttribute('value', firstPlace.formatted_address);
         document.getElementById("placeAddressInput").setAttribute('readonly', "");
         document.getElementById("placeAddressInput").style.display = "block";
+
+        let tipContent = "";
+        place.tips.forEach(function(tip) {
+          tipContent = tipContent + "<br><br>" + tip.tipper.name + "<br>"
+            + tip.comment + "<br>";
+        });
+        document.getElementById("tipList").innerHTML = tipContent;
       }
 
       function geocodeAddress(geocoder, resultsMap) {
