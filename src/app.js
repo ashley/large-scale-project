@@ -5,6 +5,7 @@ const bodyParser = require('body-parser');
 const db = require('./db');
 const UserFactory = require('./script/sanitize_users.js');
 const PlaceFactory = require('./script/sanitize_places.js');
+const CheckInFactory = require('./script/sanitize_check_ins.js');
 const app = express();
 
 // MongoDB Objects
@@ -112,4 +113,5 @@ app.listen(3000, function () {
   console.log("Running server on localhost:3000");
   UserFactory(2);
   PlaceFactory();
+  CheckInFactory();
 });
