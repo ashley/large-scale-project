@@ -25,6 +25,7 @@ function create_checkin(user, place){
       if(tip_err) throw err;
       const checkin = new CheckIn({
         spot: place,
+        user: user,
         time: new Date(Date.now()),
         tip: tip,
         rating: rating
