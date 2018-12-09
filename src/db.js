@@ -43,6 +43,7 @@ const PlaceSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'rating'
   }],
+  agg_rating: Number,
   tips: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'tip'

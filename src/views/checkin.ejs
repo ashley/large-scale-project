@@ -290,8 +290,11 @@
             quiet: place.quiet
           });
 
+          let content = place.name + "<br>" + place.address + "<br>"
+            + "Rating: " + place.agg_rating + ", after " + place.ratings.length
+            + " reviews.";
           let infowindow = new google.maps.InfoWindow({
-            content: place.name + "<br>" + place.address
+            content: content
           });
 
           marker.addListener('click', function() {

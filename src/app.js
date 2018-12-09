@@ -90,6 +90,7 @@ app.post('/check-in', (req, res) => {
           bathroom: req.body.bathroom,
           quiet: req.body.quiet,
           ratings: [],
+          agg_rating: 0,
           tips: [],
           check_ins: []
         });
