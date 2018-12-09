@@ -4,6 +4,7 @@ const path = require('path');
 const bodyParser = require('body-parser');
 const db = require('./db');
 const UserFactory = require('./script/sanitize_users.js');
+const PlaceFactory = require('./script/sanitize_places.js');
 const app = express();
 
 // MongoDB Objects
@@ -28,11 +29,6 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 // Routing
 app.get('/', (req, res) => {
-  const place = new Place({name: "bar"});
-  place.save(function(err){
-    if (err) throw err;
-    console.log('saved');
-  });
   // load spots
   Place.find({}, (err, places, count) => {
     if(places){
@@ -115,4 +111,5 @@ app.post('/check-in', (req, res) => {
 app.listen(3000, function () {
   console.log("Running server on localhost:3000");
   UserFactory(2);
+  PlaceFactory();
 });
