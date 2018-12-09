@@ -30,11 +30,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 // Routing
 app.get('/', (req, res) => {
-  const place = new Place({name: "bar"});
-  place.save(function(err){
-    if (err) throw err;
-    console.log('saved');
-  });
+  res.send("Yeet");
 });
 
 app.get('/check-in', (req, res) => {
