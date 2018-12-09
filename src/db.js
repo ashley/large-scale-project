@@ -36,7 +36,9 @@ const PlaceSchema = new mongoose.Schema({
   place_id: String,
   lat: Number,
   lng: Number,
-  category: String,
+  wifi: Boolean,
+  bathroom: Boolean,
+  quiet: Boolean,
   ratings: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'rating'

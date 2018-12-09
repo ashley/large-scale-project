@@ -30,20 +30,23 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 // Routing
 app.get('/', (req, res) => {
-  // load spots
-  Place.find({}, (err, places, count) => {
-    if(places){
-      res.render('index', {user: {name: 'ashley'}, spots: places});
-    }
-    if(err){
-      throw err; //for now 
-    }
-  })
+  const place = new Place({name: "bar"});
+  place.save(function(err){
+    if (err) throw err;
+    console.log('saved');
+  });
 });
 
 app.get('/check-in', (req, res) => {
-
-  res.render('checkin');
+  // load spots
+  Place.find({}, (err, places, count) => {
+    if(places){
+      res.render('checkin',  {spots: places});
+    }
+    if(err){
+      throw err; //for now
+    }
+  })
 });
 
 app.post('/check-in', (req, res) => {
@@ -83,7 +86,9 @@ app.post('/check-in', (req, res) => {
           place_id: req.body.placeGoogleId,
           lat: req.body.placeLat,
           lng: req.body.placeLong,
-          category: "test",
+          wifi: req.body.wifi,
+          bathroom: req.body.bathroom,
+          quiet: req.body.quiet,
           ratings: [],
           tips: [],
           check_ins: []

@@ -140,6 +140,12 @@
     </style>
   </head>
   <body>
+    <div id="filterPanel">
+      Filter by: <br>
+      <input type="checkbox" name="wifiFilter"> Wifi<br>
+      <input type="checkbox" name="bathroomFilter"> Public Bathroom<br>
+      <input type="checkbox" name="quietFilter"> Quiet Place<br>
+    </div>
     <input id="pac-input" class="controls" type="text" placeholder="Search Box">
     <div id="map"></div>
     <form method="POST" action="">
@@ -168,6 +174,13 @@
       <br><br>
       <input type="submit" id="submitButton" value="Submit">
     </form>
+    <% if(spots) {%>
+      <ul>
+        <% for(var i=0; i<spots.length; i++) { %>
+          <li><%= spots[i].name %></li>
+        <% } %>
+      </ul>
+    <% } %>
     <script>
       // This example adds a search box to a map, using the Google Place Autocomplete
       // feature. People can enter geographical searches. The search box will return a
@@ -177,6 +190,25 @@
       // parameter when you first load the API. For example:
       // <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places">
       let firstPlace;
+      let map;
+      let dbMarkers = [];
+      let markers = [];
+
+      function hideDBMarkers() {
+        dbMarkers.forEach(function(marker) {
+          marker.setMap(null);
+        });
+      }
+
+      function showDBMarkers() {
+        // let wifiOnly = document.getElementByName("wifiFilter").checked;
+        // let bathroomOnly = document.getElementByName("bathroomFilter").checked;
+        // let quietOnly = document.getElementByName("quietFilter").checked;
+
+        dbMarkers.forEach(function(marker) {
+          marker.setMap(map);
+        });
+      }
 
       function updatePlace(place) {
         firstPlace = place;
@@ -228,12 +260,45 @@
       }
 
       function initAutocomplete() {
-        let map = new google.maps.Map(document.getElementById('map'), {
+        map = new google.maps.Map(document.getElementById('map'), {
           //center: {lat: -33.8688, lng: 151.2195},
           center: {lat: 40.7308, lng: -73.9973},
           zoom: 15,
           mapTypeId: 'roadmap'
         });
+
+        let spots = <%- JSON.stringify(spots) %>;
+        console.log(spots);
+
+        spots.forEach(function(place) {
+          let position = {lat: place.lat, lng: place.lng};
+          let marker = new google.maps.Marker({
+            map: map,
+            title: place.name,
+            position: position
+          });
+
+          let infowindow = new google.maps.InfoWindow({
+            content: place.name + "<br>" + place.address
+          });
+
+          marker.addListener('click', function() {
+            updatePlace(place);
+            markers.forEach(marker => marker.setMap(null));
+          });
+
+          marker.addListener('mouseover', function() {
+            infowindow.open(map, marker);
+          });
+
+          marker.addListener('mouseout', function() {
+            infowindow.close();
+          })
+
+          dbMarkers.push(marker);
+        });
+
+
 
         // let geocoder = new google.maps.Geocoder();
         // document.getElementById('submitButton').addEventListener('click', function() {
@@ -250,7 +315,7 @@
           searchBox.setBounds(map.getBounds());
         });
 
-        let markers = [];
+        markers = [];
         // Listen for the event fired when the user selects a prediction and retrieve
         // more details for that place.
         searchBox.addListener('places_changed', function() {
@@ -295,6 +360,8 @@
               title: place.name,
               position: place.geometry.location
             });
+
+            console.log(place.geometry.location);
 
             let infowindow = new google.maps.InfoWindow({
               content: place.name + "<br>" + place.formatted_address
