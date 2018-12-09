@@ -19,6 +19,10 @@ const CheckInSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'place'
   },
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'user'
+  },
   time: Date,
   tip: {
     type: mongoose.Schema.Types.ObjectId,
@@ -75,7 +79,7 @@ mongoose.model('Place', PlaceSchema);
 mongoose.model('Tip', TipSchema);
 mongoose.model('Rating', RatingSchema);
 
-mongoose.connect('mongodb://localhost:27017/large-scale-project', function (err, db) {
+mongoose.connect('mongodb://localhost:27017/large-scale-project', function (err) {
   if (err) throw err;
   console.log('Connected to MongoDB');
 });
