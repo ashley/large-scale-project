@@ -85,7 +85,9 @@ app.post('/check-in', (req, res) => {
           place_id: req.body.placeGoogleId,
           lat: req.body.placeLat,
           lng: req.body.placeLong,
-          category: "test",
+          wifi: req.body.wifi,
+          bathroom: req.body.bathroom,
+          quiet: req.body.quiet,
           ratings: [],
           tips: [],
           check_ins: []

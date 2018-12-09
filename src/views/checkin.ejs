@@ -140,6 +140,12 @@
     </style>
   </head>
   <body>
+    <div id="filterPanel">
+      Filter by: <br>
+      <input type="checkbox" name="wifiFilter"> Wifi<br>
+      <input type="checkbox" name="bathroomFilter"> Public Bathroom<br>
+      <input type="checkbox" name="quietFilter"> Quiet Place<br>
+    </div>
     <input id="pac-input" class="controls" type="text" placeholder="Search Box">
     <div id="map"></div>
     <form method="POST" action="">
@@ -195,6 +201,10 @@
       }
 
       function showDBMarkers() {
+        // let wifiOnly = document.getElementByName("wifiFilter").checked;
+        // let bathroomOnly = document.getElementByName("bathroomFilter").checked;
+        // let quietOnly = document.getElementByName("quietFilter").checked;
+
         dbMarkers.forEach(function(marker) {
           marker.setMap(map);
         });
@@ -287,6 +297,7 @@
 
           dbMarkers.push(marker);
         });
+
 
 
         // let geocoder = new google.maps.Geocoder();
