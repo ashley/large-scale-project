@@ -142,9 +142,9 @@
   <body>
     <div id="filterPanel">
       Filter by: <br>
-      <input type="checkbox" name="wifiFilter"> Wifi<br>
-      <input type="checkbox" name="bathroomFilter"> Public Bathroom<br>
-      <input type="checkbox" name="quietFilter"> Quiet Place<br>
+      <input type="checkbox" name="wifiFilter" onchange="reloadDBMarkers()"> Wifi<br>
+      <input type="checkbox" name="bathroomFilter" onchange="reloadDBMarkers()"> Public Bathroom<br>
+      <input type="checkbox" name="quietFilter" onchange="reloadDBMarkers()"> Quiet Place<br>
     </div>
     <input id="pac-input" class="controls" type="text" placeholder="Search Box">
     <div id="map"></div>
@@ -201,13 +201,21 @@
       }
 
       function showDBMarkers() {
-        // let wifiOnly = document.getElementByName("wifiFilter").checked;
-        // let bathroomOnly = document.getElementByName("bathroomFilter").checked;
-        // let quietOnly = document.getElementByName("quietFilter").checked;
+        let wifiOnly = document.getElementsByName("wifiFilter")[0].checked;
+        let bathroomOnly = document.getElementsByName("bathroomFilter")[0].checked;
+        let quietOnly = document.getElementsByName("quietFilter")[0].checked;
 
         dbMarkers.forEach(function(marker) {
-          marker.setMap(map);
+          if (!((wifiOnly && !marker.wifi) || (bathroomOnly && !marker.bathroom)
+            || (quietOnly && !marker.quiet))) {
+              marker.setMap(map);
+          }
         });
+      }
+
+      function reloadDBMarkers() {
+        hideDBMarkers();
+        showDBMarkers();
       }
 
       function updatePlace(place) {
@@ -275,11 +283,18 @@
           let marker = new google.maps.Marker({
             map: map,
             title: place.name,
-            position: position
+            position: position,
+            place_id: place.place_id,
+            wifi: place.wifi,
+            bathroom: place.bathroom,
+            quiet: place.quiet
           });
 
+          let content = place.name + "<br>" + place.address + "<br>"
+            + "Rating: " + place.agg_rating + ", after " + place.ratings.length
+            + " reviews.";
           let infowindow = new google.maps.InfoWindow({
-            content: place.name + "<br>" + place.address
+            content: content
           });
 
           marker.addListener('click', function() {
@@ -298,7 +313,7 @@
           dbMarkers.push(marker);
         });
 
-
+        reloadDBMarkers();
 
         // let geocoder = new google.maps.Geocoder();
         // document.getElementById('submitButton').addEventListener('click', function() {
