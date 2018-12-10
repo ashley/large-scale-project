@@ -45,10 +45,13 @@ function create_checkin(user, place){
 }
 
 function add_checkin_to_user() {
-  User.findOne({}, (err, user, count) => {
+  User.find({}, (err, user, count) => {
+    user = user[0];
     if (err) throw err;
+    // console.log("Found user ", user);
     Place.findOne({}, (err, place, count) => {
       if (err) throw err;
+      // console.log("Found place ", place);
       create_checkin(user, place);
     });
   });

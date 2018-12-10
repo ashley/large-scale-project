@@ -40,6 +40,10 @@ const PlaceSchema = new mongoose.Schema({
   place_id: String,
   lat: Number,
   lng: Number,
+  geo: {
+    type: { type: String },
+    coordinates: [ Number ]
+  },
   wifi: Boolean,
   bathroom: Boolean,
   quiet: Boolean,
@@ -74,6 +78,7 @@ const RatingSchema = new mongoose.Schema({
   },
 });
 
+PlaceSchema.index({ geo: '2dsphere' });
 mongoose.model('User', UserSchema);
 mongoose.model('CheckIn', CheckInSchema);
 mongoose.model('Place', PlaceSchema);
