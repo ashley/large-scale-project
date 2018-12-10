@@ -2,6 +2,6 @@
   "mongoHost": "ds227674",
   "mongoPort": "27674",
   "mongoDatabase": "large-scale",
-  "mongoUser": "mimid",
+  "mongoUser": "mimi",
   "mongoPass": "Youtube1!"
 }

@@ -249,14 +249,20 @@ const pass = nconf.get('mongoPass');
 const host = nconf.get('mongoHost');
 const port = nconf.get('mongoPort');
 
-let uri = `mongodb://${user}:${pass}@${host}:${port}`;
+let mlabURI = `mongodb://${user}:${pass}@${host}.mlab.com:${port}`;
+const devURI = `mongodb://localhost:27017/large-scale-project`
 
 if (nconf.get('mongoDatabase')) {
-  mlabURI = `${uri}/${nconf.get('mongoDatabase')}`;
+  mlabURI = `${mlabURI}/${nconf.get('mongoDatabase')}`;
 }
 
-// 'mongodb://localhost:27017/large-scale-project'
+/*
+Yo00oo to continue working locally - 
 
+replace mlabURI in mongoose.connect() with devURI, already initalized above
+*/
+
+console.log(mlabURI)
 mongoose.connect(mlabURI, {useNewUrlParser: true} , function (err, db) {
   console.log('Connected to MongoDB');
   const collection_names = Object.keys(db.collections);
