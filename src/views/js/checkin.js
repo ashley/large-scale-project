@@ -28,6 +28,20 @@ function reloadDBMarkers() {
   showDBMarkers();
 }
 
+function getLocation() {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(function(location) {
+      fetch('/button?lat=' + location.coords.latitude + '&lng=' + location.coords.longitude).then(function() {
+        console.log("My endpoint returned!");
+        console.log(location);
+      });
+    });
+  }
+  else{
+    console.log("Cou")
+  }
+}
+
 function updatePlace(place) {
   firstPlace = place;
 

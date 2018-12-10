@@ -25,6 +25,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'views')));
 app.set('views', path.join(__dirname, 'views'));
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 
 
 // Routing
@@ -32,6 +33,24 @@ app.get('/', (req, res) => {
   res.send("Yeet");
 });
 
+app.get('/button', (req, res) => {
+  console.log(req.query);
+  Place.find({
+    geo: {
+     $near: {
+      $maxDistance: 2000,
+      $geometry: {
+       type: "Point",
+       coordinates: [req.query.lng, req.query.lat]
+      }
+     }
+    }
+   }).find((error, results) => {
+    if (error) console.log(error);
+    console.log(results);
+    res.render('checkin', {spots: results});
+   });
+})
 app.get('/check-in', (req, res) => {
   // load spots
   Place.find({}, (err, places, count) => {
