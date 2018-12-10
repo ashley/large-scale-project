@@ -125,17 +125,23 @@ app.post('/check-in', (req, res) => {
             place.save(function (err){
               if (err) throw err;
               console.log("Saved checkin at already created:", req.body.placeName);
+              res.redirect('/check-in');
             });
           });
         });
       });
     } else { //place did not exist, create new place
+      console.log(req.body.placeLong, req.body.placeLat);
       const new_place = new Place({
         name: req.body.placeName,
         address: req.body.placeAddress,
         place_id: req.body.placeGoogleId,
         lat: req.body.placeLat,
         lng: req.body.placeLong,
+        geo: { 
+          type: "Point",
+          coordinates: [Number(req.body.placeLong), Number(req.body.placeLat)]
+        },
         wifi: req.body.wifi ? true : false,
         bathroom: req.body.bathroom ? true : false,
         quiet: req.body.quiet ? true : false,
@@ -173,6 +179,7 @@ app.post('/check-in', (req, res) => {
             new_place.save(function (err){
               if (err) throw err;
               console.log("Saved checkin at newly created:", req.body.placeName);
+              res.redirect('/check-in');
             });
           });
         });
