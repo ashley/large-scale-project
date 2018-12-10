@@ -38,7 +38,7 @@ function getLocation() {
     });
   }
   else{
-    console.log("Cou")
+    console.log("Could not find the location.");
   }
 }
 
