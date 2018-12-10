@@ -1,5 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const nconf = require('nconf');
 const path = require('path');
 const bodyParser = require('body-parser');
 const db = require('./db');
@@ -241,11 +242,26 @@ app.post('/check-in', (req, res) => {
   //   });
 });
 
-mongoose.connect('mongodb://localhost:27017/large-scale-project', { useNewUrlParser: true } , function (err, db) {
+nconf.argv().env().file('keys.json');
+
+const user = nconf.get('mongoUser');
+const pass = nconf.get('mongoPass');
+const host = nconf.get('mongoHost');
+const port = nconf.get('mongoPort');
+
+let uri = `mongodb://${user}:${pass}@${host}:${port}`;
+
+if (nconf.get('mongoDatabase')) {
+  mlabURI = `${uri}/${nconf.get('mongoDatabase')}`;
+}
+
+// 'mongodb://localhost:27017/large-scale-project'
+
+mongoose.connect(mlabURI, {useNewUrlParser: true} , function (err, db) {
   console.log('Connected to MongoDB');
   const collection_names = Object.keys(db.collections);
   app.listen(8080, function () {
-    console.log("Running server on localhost:3000");
+    console.log("Running server on localhost:8080");
     UserFactory(2, function (err) {
       if (err) throw err;
       console.log("Done with user");
