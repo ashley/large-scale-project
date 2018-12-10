@@ -244,7 +244,7 @@ app.post('/check-in', (req, res) => {
 mongoose.connect('mongodb://localhost:27017/large-scale-project', { useNewUrlParser: true } , function (err, db) {
   console.log('Connected to MongoDB');
   const collection_names = Object.keys(db.collections);
-  app.listen(3000, function () {
+  app.listen(8080, function () {
     console.log("Running server on localhost:3000");
     UserFactory(2, function (err) {
       if (err) throw err;
