@@ -225,27 +225,15 @@ app.post('/check-in', (req, res) => {
 mongoose.connect('mongodb://localhost:27017/large-scale-project', { useNewUrlParser: true } , function (err, db) {
   console.log('Connected to MongoDB');
   const collection_names = Object.keys(db.collections);
-  const start = async() => {  
-    await collection_names.forEach( async(name) => {
-      if(db.collection(name).find()){
-        db.collection(name).drop(function(err, delOK){
-          if (err){
-            console.log("Error found in", name);
-            throw err;
-          }
-          if (delOK) console.log("Clearned ", name, " collection");
-        });
-      }
-      else{
-        console.log('Collection', name, "not found");
-      }
+  app.listen(3000, function () {
+    console.log("Running server on localhost:3000");
+    UserFactory(2, function (err) {
+      if (err) throw err;
+      console.log("Done with user");
+      PlaceFactory(function(err) {
+        if (err) throw err;
+        CheckInFactory();
+      });
     });
-    app.listen(3000, function () {
-      console.log("Running server on localhost:3000");
-      UserFactory(2);
-      PlaceFactory();
-      CheckInFactory();
-    });
-  }
-  start();
+  });
 });

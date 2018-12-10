@@ -48,24 +48,38 @@ const places = {
 }
 
 function create_place(place) {
-  const new_place = new Place({
-    name: place.name,
-    address: place.address,
-    place_id: place.place_id,
-    lat: place.lat,
-    lng: place.lng,
-    wifi: place.wifi,
-    bathroom: place.bathroom,
-    quiet: place.quiet
-  });
-  new_place.save(function (err) {
-    if (err) throw err;
-    console.log("Created Place: " + place.name);
+  return new Promise( function(resolve, reject){
+    const new_place = new Place({
+      name: place.name,
+      address: place.address,
+      place_id: place.place_id,
+      lat: place.lat,
+      lng: place.lng,
+      geo: { 
+        type: "Point",
+        coordinates: [place.lng, place.lat]
+      },
+      wifi: place.wifi,
+      bathroom: place.bathroom,
+      quiet: place.quiet
+    });
+    new_place.save(function (err) {
+      if (err) reject(err);
+      console.log("Created Place: " + place.name);
+      resolve();
+    });
   });
 }
 
-module.exports = function () {
-  for(let i in places){
-    create_place(places[i]);
+module.exports = function (cb) {
+  function wrapped_callback(errors) {
+    if (!errors) { return cb(); }
+    return cb(errors.find(error => error !== undefined));
   }
+  let promises = [];
+  for(let i in places){
+    promises.push(create_place(places[i]));
+  }
+  Promise.all(promises).then(wrapped_callback, wrapped_callback);
 }
+
