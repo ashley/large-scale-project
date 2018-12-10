@@ -6,7 +6,6 @@ const UserSchema = new mongoose.Schema({
   email: String,
   password: {
     type: String,
-    unique: true,
     required: true
   },
   previously_check_in: {
@@ -19,6 +18,10 @@ const CheckInSchema = new mongoose.Schema({
   spot: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'place'
+  },
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'user'
   },
   time: Date,
   tip: {
@@ -34,11 +37,21 @@ const CheckInSchema = new mongoose.Schema({
 const PlaceSchema = new mongoose.Schema({
   name: String,
   address: String,
-  category: String,
+  place_id: String,
+  lat: Number,
+  lng: Number,
+  geo: {
+    type: { type: String },
+    coordinates: [ Number ]
+  },
+  wifi: Boolean,
+  bathroom: Boolean,
+  quiet: Boolean,
   ratings: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'rating'
   }],
+  agg_rating: Number,
   tips: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'tip'
@@ -65,12 +78,11 @@ const RatingSchema = new mongoose.Schema({
   },
 });
 
+PlaceSchema.index({ geo: '2dsphere' });
 mongoose.model('User', UserSchema);
 mongoose.model('CheckIn', CheckInSchema);
 mongoose.model('Place', PlaceSchema);
 mongoose.model('Tip', TipSchema);
 mongoose.model('Rating', RatingSchema);
 
-mongoose.connect('mongodb://localhost:27017/large-scale-project', {
-  useNewUrlParser: true
-});
+
