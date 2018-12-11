@@ -30,10 +30,15 @@ function reloadDBMarkers() {
 
 function getLocation() {
   if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(function(location) {
-      fetch('/button?lat=' + location.coords.latitude + '&lng=' + location.coords.longitude).then(function() {
+    navigator.geolocation.getCurrentPosition(function(loc) {
+      fetch('/button?lat=' + loc.coords.latitude + '&lng=' + loc.coords.longitude).then(function(response) {
         console.log("My endpoint returned!");
-        console.log(location);
+        console.log(loc);
+        response.json().then(data => {
+          console.log("Data is here");
+          console.log(data);
+          map.setCenter({lat: parseFloat(data.setLat), lng: parseFloat(data.setLong)});
+        });
       });
     });
   }
@@ -104,10 +109,12 @@ function geocodeAddress(geocoder, resultsMap) {
   });
 }
 
-function initAutocomplete() {
+function initAutocomplete(curLat=undefined, curLong=undefined) {
   let docLat = document.getElementById("innerLat") ? document.getElementById("innerLat").innerHTML: false;
+  if(curLat != undefined) docLat = curLat;
   console.log('initAutocomplete: ', docLat)
   let docLong = document.getElementById("innerLat") ? document.getElementById("innerLat").innerHTML: false;
+  if(curLong != undefined) docLong = curLong;
   console.log('initAutocomplete: ', docLong)
   let setLat = docLat ? docLat : 40.7308;
   let setLong = docLong ?  docLong : -73.9973;
@@ -167,6 +174,7 @@ function initAutocomplete() {
 
   // Create the search box and link it to the UI element.
   var input = document.getElementById('pac-input');
+  console.log(input);
   var searchBox = new google.maps.places.SearchBox(input);
   map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
 
