@@ -42,25 +42,31 @@ function getLocation() {
   }
 }
 
-function updatePlace(place) {
+function updatePlace(place, click) {
   firstPlace = place;
 
-  document.getElementById("placeName").innerHTML = 'Your Chosen Place Name: '
+  // document.getElementById("placeName").innerHTML = 'Your Chosen Place Name: '
   document.getElementById("placeNameInput").setAttribute('value', firstPlace.name);
-  document.getElementById("placeNameInput").setAttribute('readonly', "");
-  document.getElementById("placeNameInput").style.display = "block";
+  //document.getElementById("placeNameInput").setAttribute('readonly', "");
+  //document.getElementById("placeNameInput").style.display = "block";
 
-  document.getElementById("placeAddress").innerHTML = 'Your Chosen Place Address: '
-  document.getElementById("placeAddressInput").setAttribute('value', firstPlace.formatted_address);
-  document.getElementById("placeAddressInput").setAttribute('readonly', "");
-  document.getElementById("placeAddressInput").style.display = "block";
+  // document.getElementById("placeAddress").innerHTML = 'Your Chosen Place Address: '
+  if (click) {
+    document.getElementById("placeAddressInput").setAttribute('value', firstPlace.address);
+  } else {
+    document.getElementById("placeAddressInput").setAttribute('value', firstPlace.formatted_address);
+  }
+  //document.getElementById("placeAddressInput").setAttribute('value', firstPlace.formatted_address);
+  //document.getElementById("placeAddressInput").setAttribute('readonly', "");
+  //document.getElementById("placeAddressInput").style.display = "block";
 
   let tipContent = "";
-  place.tips.forEach(function(tip) {
-    tipContent = tipContent + "<br><br>" + tip.tipper.name + "<br>"
-      + tip.comment + "<br>";
-  });
-  document.getElementById("tipList").innerHTML = tipContent;
+  console.log('place: ', place)
+  // place.tips.forEach(function(tip) {
+  //   tipContent = tipContent + "<br><br>" + tip.tipper.name + "<br>"
+  //     + tip.comment + "<br>";
+  // });
+  // document.getElementById("tipList").innerHTML = tipContent;
 }
 
 function geocodeAddress(geocoder, resultsMap) {
@@ -122,14 +128,15 @@ function initAutocomplete() {
     });
 
     let content = place.name + "<br>" + place.address + "<br>"
-      + "Rating: " + place.agg_rating + ", after " + place.ratings.length
+      + "Rating: " + place.agg_rating.toFixed(2) + ", after " + place.ratings.length
       + " reviews.";
     let infowindow = new google.maps.InfoWindow({
       content: content
     });
 
     marker.addListener('click', function() {
-      updatePlace(place);
+      //updatePlace will be looking from within database  
+      updatePlace(place, true);
       markers.forEach(marker => marker.setMap(null));
     });
 
