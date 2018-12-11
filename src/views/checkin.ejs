@@ -157,7 +157,7 @@
     <form method="POST" action="">
       <div id='placeName'>Your Chosen Place Name: </div>
       <!-- make place required but place is a hidden field?-->
-      <input type="text" name='placeName' id="placeNameInput" value="you must click on a pin">
+      <input type="text" name='placeName' id="placeNameInput" value="Click on pin or use search bar on map!">
       <br>
       <div id='placeAddress'>Your Chosen Place Address: </div>
       <input type="text" name='placeAddress' id="placeAddressInput" readonly="">
@@ -181,10 +181,10 @@
       <br><br>
       <input type="submit" id="submitButton" value="Submit">
     </form>
-    Tips: <br>
+    <!-- Tips: <br>
     <div id="tipList">
       You haven't selected a place yet.
-    </div>
+    </div> -->
     <!-- <div id="setLat"> -->
         <% if (locals.setLat) { %>
           <p id="innerLat"><%= setLat %></p>
@@ -202,4 +202,4 @@
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC-yMF_1lEOcOidKth8PsGX2eTTNthb02A&libraries=places&callback=initAutocomplete"
          async defer></script>
   </body>
-</html>>
+</html>

@@ -58,6 +58,10 @@ function updatePlace(place, click) {
   // document.getElementById("placeAddress").innerHTML = 'Your Chosen Place Address: '
   if (click) {
     document.getElementById("placeAddressInput").setAttribute('value', firstPlace.address);
+    document.getElementById("placeGoogleId").setAttribute('value', firstPlace.place_id);
+    document.getElementById("placeLat").setAttribute('value', obj.lat);
+    document.getElementById("placeLong").setAttribute('value', obj.lng);
+
   } else {
     document.getElementById("placeAddressInput").setAttribute('value', firstPlace.formatted_address);
   }
@@ -117,7 +121,9 @@ function initAutocomplete(curLat=undefined, curLong=undefined) {
   if(curLong != undefined) docLong = curLong;
   console.log('initAutocomplete: ', docLong)
   let setLat = docLat ? docLat : 40.7308;
+  //let setLat = docLat ? docLat : 40.77124965436669; //upper east side
   let setLong = docLong ?  docLong : -73.9973;
+  //let setLong = docLong ?  docLong : -73.95872561261059; //upper east side
   map = new google.maps.Map(document.getElementById('map'), {
     //center: {lat: -33.8688, lng: 151.2195},
     //center: {lat: 40.7308, lng: -73.9973},

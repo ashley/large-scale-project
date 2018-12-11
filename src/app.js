@@ -146,7 +146,7 @@ app.post('/check-in', (req, res) => {
             place.save(function (err){
               if (err) throw err;
               //console.log('place tips now in HERREEE: ', place.tips)
-              //console.log("Saved checkin at already created:", req.body.placeName);
+              console.log("Saved checkin at already created:", req.body.placeName);
               res.redirect('/check-in');
             });
           });
@@ -154,6 +154,15 @@ app.post('/check-in', (req, res) => {
       });
     } else { //place did not exist, create new place
       console.log(req.body.placeLong, req.body.placeLat);
+      // if (wifiVal) {
+      //   place.wifi = true;
+      // }
+      // if (quietVal) {
+      //   place.quiet = true;
+      // }
+      // if (bathroomVal) {
+      //   place.bathroom = true;
+      // }
       const new_place = new Place({
         name: req.body.placeName,
         address: req.body.placeAddress,
@@ -164,9 +173,9 @@ app.post('/check-in', (req, res) => {
           type: "Point",
           coordinates: [Number(req.body.placeLong), Number(req.body.placeLat)]
         },
-        wifi: req.body.wifi ? true : false,
-        bathroom: req.body.bathroom ? true : false,
-        quiet: req.body.quiet ? true : false,
+        wifi: wifiVal ? true : false,
+        bathroom: bathroomVal ? true : false,
+        quiet: quietVal ? true : false,
         ratings: [],
         tips: [],
         check_ins: []
