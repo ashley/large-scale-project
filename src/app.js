@@ -73,15 +73,15 @@ app.get('/check-in', (req, res) => {
       $maxDistance: 6000,
       $geometry: {
        type: "Point",
-       coordinates: [-73.95872561261059, 40.77124965436669]
+       coordinates: [-73.98383527994157, 40.75560910351759]
       }
      }
     }
    }).find((error, results) => {
     if (error) console.log(error);
     console.log('upper east: ', typeof(results));
-    let queryLat = req.query.lat ? req.query.lat : 40.77124965436669;
-    let queryLong = req.query.long ? req.query.long : -73.95872561261059;
+    let queryLat = req.query.lat ? req.query.lat : 40.75560910351759;
+    let queryLong = req.query.long ? req.query.long : -73.98383527994157;
     res.render('checkin', {spots: results, setLat: queryLat, setLong: queryLong});
     //res.render('checkin', {spots: results, setLat: 40.77124965436669, setLong: -73.95872561261059});
     //const new_data = {spots: results, setLat: 40.77124965436669, setLong: -73.95872561261059};
