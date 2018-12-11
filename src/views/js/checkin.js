@@ -105,9 +105,16 @@ function geocodeAddress(geocoder, resultsMap) {
 }
 
 function initAutocomplete() {
+  let docLat = document.getElementById("innerLat") ? document.getElementById("innerLat").innerHTML: false;
+  console.log('initAutocomplete: ', docLat)
+  let docLong = document.getElementById("innerLat") ? document.getElementById("innerLat").innerHTML: false;
+  console.log('initAutocomplete: ', docLong)
+  let setLat = docLat ? docLat : 40.7308;
+  let setLong = docLong ?  docLong : -73.9973;
   map = new google.maps.Map(document.getElementById('map'), {
     //center: {lat: -33.8688, lng: 151.2195},
-    center: {lat: 40.7308, lng: -73.9973},
+    //center: {lat: 40.7308, lng: -73.9973},
+    center: {lat: setLat, lng: setLong},
     zoom: 15,
     mapTypeId: 'roadmap'
   });
