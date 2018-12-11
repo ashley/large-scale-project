@@ -117,7 +117,7 @@ function initAutocomplete(curLat=undefined, curLong=undefined) {
   let docLat = document.getElementById("innerLat") ? document.getElementById("innerLat").innerHTML: false;
   if(curLat != undefined) docLat = curLat;
   console.log('initAutocomplete: ', docLat)
-  let docLong = document.getElementById("innerLat") ? document.getElementById("innerLat").innerHTML: false;
+  let docLong = document.getElementById("innerLong") ? document.getElementById("innerLong").innerHTML: false;
   if(curLong != undefined) docLong = curLong;
   console.log('initAutocomplete: ', docLong)
   let setLat = docLat ? docLat : 40.7308;
