@@ -162,6 +162,7 @@ function initAutocomplete(curLat=undefined, curLong=undefined, spotsParam=undefi
   let docLat = document.getElementById("innerLat") ? parseFloat(document.getElementById("innerLat").innerHTML) : false;
   if(curLat != undefined) docLat = curLat;
   console.log('initAutocomplete: ', docLat)
+
   let docLong = document.getElementById("innerLong") ? parseFloat(document.getElementById("innerLong").innerHTML): false;
   if(curLong != undefined) docLong = curLong;
   console.log('initAutocomplete: ', docLong)
