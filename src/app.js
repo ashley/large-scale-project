@@ -67,16 +67,18 @@ app.get('/check-in', (req, res) => {
 app.post('/check-in', (req, res) => {
   let time = new Date();
   //res.redirect('/');
+  let placeKind = req.body.placeKind;
+  console.log('placeKind: ', placeKind)
   let wifiVal;
   let bathroomVal;
   let quietVal;
-  if (req.body.wifi) {
+  if (placeKind === 'wifi') {
     wifiVal = true;
   }
-  if (req.body.quiet) {
+  if (placeKind === 'quiet') {
     quietVal = true;
   }
-  if (req.body.bathroom) {
+  if (placeKind === 'bathroom') {
     bathroomVal = true
   }
   let user;
@@ -89,6 +91,8 @@ app.post('/check-in', (req, res) => {
   Place.findOne({place_id: req.body.placeGoogleId}, (err, place, count) => {
     if (err) throw err;
     if (place) {
+      console.log('lil buddy: ', place)
+      //console.log('place tips here: ', place.tips)
       const rating = new Rating({
         like: parseInt(req.body.rating),
         rater: user
@@ -119,12 +123,29 @@ app.post('/check-in', (req, res) => {
             if (bathroomVal) {
               place.bathroom = true;
             }
+            //console.log('place tips in here...', place.tips)
+            
+            console.log('old avg: ', place.agg_rating)
+            let numb_rating = place.tips.length+1;
+            // let curr_avg = place.agg_rating;
+            // console.log('curr avg original: ', curr_avg);
+            // curr_avg -= curr_avg/numb_rating;
+            // console.log('curr avg -=', curr_avg)
+            // curr_avg += parseFloat(place.agg_rating)/(numb_rating)
+            // console.log('curr avg +=', curr_avg)
+            //avg -= avg / N;
+            //avg += new_sample / N;
+            //New average = old average * (n-1)/n + new value /n
+            let new_avg = place.agg_rating * ((numb_rating)-1)/numb_rating + parseFloat(req.body.rating)/numb_rating;
+            //console.log('new avg: ', curr_avg); 
+            place.agg_rating = new_avg;
             place.ratings.push(rating);
             place.tips.push(tip);
             place.check_ins.push(checkin);
             place.save(function (err){
               if (err) throw err;
-              console.log("Saved checkin at already created:", req.body.placeName);
+              //console.log('place tips now in HERREEE: ', place.tips)
+              //console.log("Saved checkin at already created:", req.body.placeName);
               res.redirect('/check-in');
             });
           });
@@ -173,6 +194,7 @@ app.post('/check-in', (req, res) => {
           });
           checkin.save(function (err){
             if (err) throw err;
+            new_place.agg_rating = parseInt(req.body.rating);
             new_place.ratings.push(rating);
             new_place.tips.push(tip);
             new_place.check_ins.push(checkin);
@@ -270,18 +292,18 @@ replace mlabURI in mongoose.connect() with devURI, already initalized above
 */
 
 console.log(mlabURI)
-mongoose.connect(mlabURI, {useNewUrlParser: true} , function (err, db) {
+mongoose.connect(devURI, {useNewUrlParser: true} , function (err, db) {
   console.log('Connected to MongoDB');
   const collection_names = Object.keys(db.collections);
   app.listen(8080, function () {
     console.log("Running server on localhost:8080");
-    UserFactory(2, function (err) {
-      if (err) throw err;
-      console.log("Done with user");
-      PlaceFactory(function(err) {
-        if (err) throw err;
-        CheckInFactory();
-      });
-    });
+    // UserFactory(2, function (err) {
+    //   if (err) throw err;
+    //   console.log("Done with user");
+    //   PlaceFactory(function(err) {
+    //     if (err) throw err;
+    //     CheckInFactory();
+    //   });
+    // });
   });
 });

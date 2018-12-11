@@ -31,13 +31,13 @@
       /* Always set the map height explicitly to define the size of the div
        * element that contains the map. */
       #placeNameInput {
-        display: none;
+        /* display: none; */
         width: 600px;
         outline: none;
         border: none;
       }
       #placeAddressInput {
-        display: none;
+        /* display: none; */
         width: 600px;
         outline: none;
         border: none;
@@ -155,28 +155,29 @@
     <div id="map"></div>
     <button onclick="getLocation()">Share My Current Location</button>
     <form method="POST" action="">
-      <div id='placeName'></div>
-      <input type="text" name='placeName' id="placeNameInput">
+      <div id='placeName'>Your Chosen Place Name: </div>
+      <!-- make place required but place is a hidden field?-->
+      <input type="text" name='placeName' id="placeNameInput" value="you must click on a pin">
       <br>
-      <div id='placeAddress'></div>
-      <input type="text" name='placeAddress' id="placeAddressInput">
+      <div id='placeAddress'>Your Chosen Place Address: </div>
+      <input type="text" name='placeAddress' id="placeAddressInput" readonly="">
       <br>
       <input type="text" name='placeGoogleId' id="placeGoogleId" readonly="">
       <input type="text" name='placeLat' id="placeLat" readonly="">
       <input type="text" name='placeLong' id="placeLong" readonly="">
       What kind of spot is this?<br>
-      <input type="checkbox" name="wifi"> Wifi<br>
-      <input type="checkbox" name="bathroom"> Public Bathroom<br>
-      <input type="checkbox" name="quiet"> Quiet Place<br>
+      <input type="radio" name="placeKind" value="wifi" required> Wifi<br>
+      <input type="radio" name="placeKind" value="bathroom"> Public Bathroom<br>
+      <input type="radio" name="placeKind" value="quiet"> Quiet Place<br>
       Rating:<br>
-      <input type="radio" name="rating" value="1"> 1 (Sad) <br>
+      <input type="radio" name="rating" value="1" required> 1 (Sad) <br>
       <input type="radio" name="rating" value="2"> 2 (Boo) <br>
       <input type="radio" name="rating" value="3"> 3 (Aiight) <br>
       <input type="radio" name="rating" value="4"> 4 (Cool) <br>
       <input type="radio" name="rating" value="5"> 5 (Extraordinary) <br>
       <br>
       Tip:
-      <input type="text" name="tip">
+      <input type="text" name="tip" required>
       <br><br>
       <input type="submit" id="submitButton" value="Submit">
     </form>
