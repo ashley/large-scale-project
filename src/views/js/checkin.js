@@ -3,6 +3,7 @@ let firstPlace;
 let map;
 let dbMarkers = [];
 let markers = [];
+let input;
 
 function hideDBMarkers() {
   dbMarkers.forEach(function(marker) {
@@ -37,9 +38,50 @@ function getLocation() {
         response.json().then(data => {
           console.log("Data is here");
           console.log(data);
+          hideDBMarkers();
           dbMarkers = [];
-          //map.setCenter({lat: parseFloat(data.setLat), lng: parseFloat(data.setLong)});
-          initAutocomplete(parseFloat(data.setLat), parseFloat(data.setLong), data.spots, 15)
+          map.setCenter({lat: parseFloat(data.setLat), lng: parseFloat(data.setLong)});
+          map.setZoom(15);
+          //initAutocomplete(parseFloat(data.setLat), parseFloat(data.setLong), data.spots, 15)
+          data.spots.forEach(function(place) {
+            let position = {lat: place.lat, lng: place.lng};
+            let marker = new google.maps.Marker({
+              map: map,
+              title: place.name,
+              position: position,
+              place_id: place.place_id,
+              wifi: place.wifi,
+              bathroom: place.bathroom,
+              quiet: place.quiet
+            });
+            console.log('marker in geolocation: ', marker)
+        
+            let content = place.name + "<br>" + place.address + "<br>"
+              + "Rating: " + place.agg_rating.toFixed(2) + ", after " + place.ratings.length
+              + " reviews.";
+            let infowindow = new google.maps.InfoWindow({
+              content: content
+            });
+        
+            marker.addListener('click', function() {
+              //updatePlace will be looking from within database  
+              updatePlace(place, true);
+              markers.forEach(marker => marker.setMap(null));
+            });
+        
+            marker.addListener('mouseover', function() {
+              infowindow.open(map, marker);
+            });
+        
+            marker.addListener('mouseout', function() {
+              infowindow.close();
+            })
+            console.log('current dbmarkers: ', dbMarkers)
+            dbMarkers.push(marker);
+          });
+          reloadDBMarkers();
+        
+        
         });
       });
     });
@@ -188,8 +230,10 @@ function initAutocomplete(curLat=undefined, curLong=undefined, spotsParam=undefi
   // });
 
   // Create the search box and link it to the UI element.
-  var input = document.getElementById('pac-input');
-  console.log(input);
+  let inputHere = document.getElementById('inputHere');
+  console.log('inputhere: ', inputHere)
+  input = document.getElementById('pac-input');
+  console.log('input: ', input);
   var searchBox = new google.maps.places.SearchBox(input);
   map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
 
