@@ -49,14 +49,15 @@ app.get('/button', (req, res) => {
    }).find((error, results) => {
     if (error) console.log(error);
     console.log(results);
-    res.render('checkin', {spots: results});
+    const new_data = {spots: results, setLat: req.query.lat, setLong: req.query.lng};
+    res.json(new_data);
    });
 })
 app.get('/check-in', (req, res) => {
   // load spots
   Place.find({}, (err, places, count) => {
     if(places){
-      res.render('checkin',  {spots: places});
+      res.render('checkin', {spots: places, setLat: false, setLong: false});
     }
     if(err){
       throw err; //for now
