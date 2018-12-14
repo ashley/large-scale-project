@@ -31,11 +31,7 @@ function getLocation() {
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(function (loc) {
       fetch('/button?lat=' + loc.coords.latitude + '&lng=' + loc.coords.longitude).then(function (response) {
-        console.log("My endpoint returned!");
-        console.log(loc);
         response.json().then(data => {
-          console.log("Data is here");
-          console.log(data);
           map.setCenter({
             lat: parseFloat(data.setLat),
             lng: parseFloat(data.setLong)
@@ -44,35 +40,18 @@ function getLocation() {
       });
     });
   } else {
-    console.log("Could not find the location.");
   }
 }
 
 function updatePlace(place, click) {
   firstPlace = place;
-
-  // document.getElementById("placeName").innerHTML = 'Your Chosen Place Name: '
   document.getElementById("placeNameInput").setAttribute('value', firstPlace.name);
-  //document.getElementById("placeNameInput").setAttribute('readonly', "");
-  //document.getElementById("placeNameInput").style.display = "block";
-
-  // document.getElementById("placeAddress").innerHTML = 'Your Chosen Place Address: '
   if (click) {
     document.getElementById("placeAddressInput").setAttribute('value', firstPlace.address);
   } else {
     document.getElementById("placeAddressInput").setAttribute('value', firstPlace.formatted_address);
   }
-  //document.getElementById("placeAddressInput").setAttribute('value', firstPlace.formatted_address);
-  //document.getElementById("placeAddressInput").setAttribute('readonly', "");
-  //document.getElementById("placeAddressInput").style.display = "block";
-
   let tipContent = "";
-  console.log('place: ', place)
-  // place.tips.forEach(function(tip) {
-  //   tipContent = tipContent + "<br><br>" + tip.tipper.name + "<br>"
-  //     + tip.comment + "<br>";
-  // });
-  // document.getElementById("tipList").innerHTML = tipContent;
 }
 
 function geocodeAddress(geocoder, resultsMap) {
@@ -81,28 +60,11 @@ function geocodeAddress(geocoder, resultsMap) {
     'address': address
   }, function (results, status) {
     if (status === 'OK') {
-      console.log('results: ', results[0]);
       let position = results[0].geometry.location;
       resultsMap.setCenter(position);
-      // let marker = new google.maps.Marker({
-      //   map: resultsMap,
-      //   position: position
-      // });
-      //
-      // let infowindow = new google.maps.InfoWindow({
-      //   content: firstPlace.name
-      // });
-      // marker.addListener('click', function() {
-      //   infowindow.open(resultsMap, marker);
-      // });
-
       let string = JSON.stringify(position)
       let obj = JSON.parse(string)
 
-      console.log(string)
-      console.log(obj)
-      console.log(obj.lat)
-      console.log('firstplace print: ', firstPlace)
       document.getElementById("placeGoogleId").setAttribute('value', firstPlace.place_id);
       document.getElementById("placeLat").setAttribute('value', obj.lat);
       document.getElementById("placeLong").setAttribute('value', obj.lng);
@@ -115,15 +77,11 @@ function geocodeAddress(geocoder, resultsMap) {
 function initAutocomplete(curLat = undefined, curLong = undefined) {
   let docLat = document.getElementById("innerLat") ? document.getElementById("innerLat").innerHTML : false;
   if (curLat != undefined) docLat = curLat;
-  console.log('initAutocomplete: ', docLat)
   let docLong = document.getElementById("innerLat") ? document.getElementById("innerLat").innerHTML : false;
   if (curLong != undefined) docLong = curLong;
-  console.log('initAutocomplete: ', docLong)
   let setLat = docLat ? docLat : 40.7308;
   let setLong = docLong ? docLong : -73.9973;
   map = new google.maps.Map(document.getElementById('map'), {
-    //center: {lat: -33.8688, lng: 151.2195},
-    //center: {lat: 40.7308, lng: -73.9973},
     center: {
       lat: setLat,
       lng: setLong
@@ -133,7 +91,6 @@ function initAutocomplete(curLat = undefined, curLong = undefined) {
   });
 
   let spots = JSON.parse(document.getElementById("spotList").innerHTML);
-  console.log(spots);
 
   spots.forEach(function (place) {
     let position = {
@@ -158,7 +115,6 @@ function initAutocomplete(curLat = undefined, curLong = undefined) {
     });
 
     marker.addListener('click', function () {
-      //updatePlace will be looking from within database  
       updatePlace(place, true);
       markers.forEach(marker => marker.setMap(null));
     });
@@ -175,11 +131,6 @@ function initAutocomplete(curLat = undefined, curLong = undefined) {
   });
 
   reloadDBMarkers();
-
-  // let geocoder = new google.maps.Geocoder();
-  // document.getElementById('submitButton').addEventListener('click', function() {
-  //   geocodeAddress(geocoder, map);
-  // });
 
   // Create the search box and link it to the UI element.
   var input = document.getElementById('pac-input');
@@ -208,9 +159,6 @@ function initAutocomplete(curLat = undefined, curLong = undefined) {
       marker.setMap(null);
     });
     markers = [];
-
-
-    //document.getElementById("placeName").innerHTML = 'Name: ' + firstPlace.name + ' \nAddress: '+ firstPlace.formatted_address ;
     updatePlace(places[0]);
     let geocoder = new google.maps.Geocoder();
     geocodeAddress(geocoder, map);
@@ -219,7 +167,6 @@ function initAutocomplete(curLat = undefined, curLong = undefined) {
     var bounds = new google.maps.LatLngBounds();
     places.forEach(function (place) {
       if (!place.geometry) {
-        console.log("Returned place contains no geometry");
         return;
       }
 
@@ -237,8 +184,6 @@ function initAutocomplete(curLat = undefined, curLong = undefined) {
         title: place.name,
         position: place.geometry.location
       });
-
-      console.log(place.geometry.location);
 
       let infowindow = new google.maps.InfoWindow({
         content: place.name + "<br>" + place.formatted_address
