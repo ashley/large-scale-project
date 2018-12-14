@@ -36,6 +36,14 @@ function getLocation() {
             lat: parseFloat(data.setLat),
             lng: parseFloat(data.setLong)
           });
+          marker = new google.maps.Marker({
+            position: new google.maps.LatLng(data.setLat, data.setLong),
+            icon: {
+              path: google.maps.SymbolPath.CIRCLE,
+              scale: 5
+            },
+            map: map
+          });
         });
       });
     });
