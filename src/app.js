@@ -124,35 +124,22 @@ app.post('/check-in', (req, res) => {
             if (bathroomVal) {
               place.bathroom = true;
             }
-            //console.log('place tips in here...', place.tips)
             
             console.log('old avg: ', place.agg_rating)
             let numb_rating = place.tips.length+1;
-            // let curr_avg = place.agg_rating;
-            // console.log('curr avg original: ', curr_avg);
-            // curr_avg -= curr_avg/numb_rating;
-            // console.log('curr avg -=', curr_avg)
-            // curr_avg += parseFloat(place.agg_rating)/(numb_rating)
-            // console.log('curr avg +=', curr_avg)
-            //avg -= avg / N;
-            //avg += new_sample / N;
-            //New average = old average * (n-1)/n + new value /n
             let new_avg = place.agg_rating * ((numb_rating)-1)/numb_rating + parseFloat(req.body.rating)/numb_rating;
-            //console.log('new avg: ', curr_avg); 
             place.agg_rating = new_avg;
             place.ratings.push(rating);
             place.tips.push(tip);
             place.check_ins.push(checkin);
             place.save(function (err){
               if (err) throw err;
-              //console.log('place tips now in HERREEE: ', place.tips)
-              //console.log("Saved checkin at already created:", req.body.placeName);
               res.redirect('/check-in');
             });
           });
         });
       });
-    } else { //place did not exist, create new place
+    } else { 
       console.log(req.body.placeLong, req.body.placeLat);
       const new_place = new Place({
         name: req.body.placeName,
@@ -209,67 +196,6 @@ app.post('/check-in', (req, res) => {
       });
     }
   });
-  // Place.findOne({place_id: req.body.placeGoogleId})
-  //   .then(place => {
-  //     // Check is the place exist
-  //     if (place) {
-  //       // const checkin = new CheckIn({
-  //       //   spot: place,
-  //       //   time: time,
-  //       //   tip: req.body.tip || "",
-  //       //   rating: req.body.rating || ""
-  //       // })
-  //       const checkin = new CheckIn({
-  //         spot: null,
-  //         time: null,
-  //         tip: req.body.tip || null,
-  //         rating: req.body.rating || null
-  //       })
-  //       console.log(place);
-  //       place.check_ins.push(checkin);
-  //       place.save(function(err){
-  //         if(err) throw err;
-  //           checkin.save(function(err){
-  //             if(err) throw err;
-  //             res.redirect('/');
-  //           })
-  //       });
-  //     }
-  //     else{
-  //       // Place is not found
-  //       const place = new Place({
-  //         name: req.body.placeName,
-  //         address: req.body.placeAddress,
-  //         place_id: req.body.placeGoogleId,
-  //         lat: req.body.placeLat,
-  //         lng: req.body.placeLong,
-  //         wifi: req.body.wifi,
-  //         bathroom: req.body.bathroom,
-  //         quiet: req.body.quiet,
-  //         ratings: [],
-  //         agg_rating: 0,
-  //         tips: [],
-  //         check_ins: []
-  //       });
-  //       place.save(function(err){
-  //         if(err) throw err;
-  //         const checkin = new CheckIn({
-  //           spot: null,
-  //           time: null,
-  //           tip: null,
-  //           rating: null
-  //         })
-  //         place.check_in.push(checkin);
-  //         checkin.save(function(err){
-  //           if(err) throw err;
-  //             res.redirect('/');
-  //         });
-  //       });
-  //     }
-  //   })
-  //   .catch(err => {
-  //     throw err;
-  //   });
 });
 
 nconf.argv().env().file('keys.json');
@@ -286,25 +212,13 @@ if (nconf.get('mongoDatabase')) {
   mlabURI = `${mlabURI}/${nconf.get('mongoDatabase')}`;
 }
 
-/*
-Yo00oo to continue working locally - 
-
-replace mlabURI in mongoose.connect() with devURI, already initalized above
-*/
-
+// To continue working locally - 
+// replace mlabURI in mongoose.connect() with devURI, already initalized above
 console.log(mlabURI)
 mongoose.connect(devURI, {useNewUrlParser: true} , function (err, db) {
   console.log('Connected to MongoDB');
   const collection_names = Object.keys(db.collections);
   app.listen(8080, function () {
     console.log("Running server on localhost:8080");
-    // UserFactory(2, function (err) {
-    //   if (err) throw err;
-    //   console.log("Done with user");
-    //   PlaceFactory(function(err) {
-    //     if (err) throw err;
-    //     CheckInFactory();
-    //   });
-    // });
   });
 });
