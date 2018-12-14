@@ -33,15 +33,16 @@ app.use(bodyParser.json());
 
 // Routing
 app.get('/', (req, res) => {
-  res.send("Yeet");
+  // Landing page - just directs to map instead
+  res.redirect('/check-in');
 });
 
 app.get('/button', (req, res) => {
-  console.log(req.query);
+  // 1. Uses mongo's $near query to find places in db
   Place.find({
     geo: {
       $near: {
-        $maxDistance: 2000,
+        $maxDistance: 2000, // in meters
         $geometry: {
           type: "Point",
           coordinates: [req.query.lng, req.query.lat]
@@ -50,17 +51,18 @@ app.get('/button', (req, res) => {
     }
   }).find((error, results) => {
     if (error) console.log(error);
-    console.log(results);
+    // 2. Sorts query into data for front-end
     const new_data = {
       spots: results,
       setLat: req.query.lat,
       setLong: req.query.lng
     };
+    // 3. Gets passed to the front-end
     res.json(new_data);
   });
 })
+
 app.get('/check-in', (req, res) => {
-  // load spots
   Place.find({}, (err, places, count) => {
     if (places) {
       res.render('checkin', {
@@ -77,9 +79,7 @@ app.get('/check-in', (req, res) => {
 
 app.post('/check-in', (req, res) => {
   let time = new Date();
-  //res.redirect('/');
   let placeKind = req.body.placeKind;
-  console.log('placeKind: ', placeKind)
   let wifiVal;
   let bathroomVal;
   let quietVal;
@@ -99,13 +99,13 @@ app.post('/check-in', (req, res) => {
       user = userFound;
     }
   });
+  // Writes checkin data into existing place
+  // Nested callbacks because of mongo reference usage
   Place.findOne({
     place_id: req.body.placeGoogleId
   }, (err, place, count) => {
     if (err) throw err;
     if (place) {
-      console.log('lil buddy: ', place)
-      //console.log('place tips here: ', place.tips)
       const rating = new Rating({
         like: parseInt(req.body.rating),
         rater: user
@@ -137,7 +137,6 @@ app.post('/check-in', (req, res) => {
               place.bathroom = true;
             }
 
-            console.log('old avg: ', place.agg_rating)
             let numb_rating = place.tips.length + 1;
             let new_avg = place.agg_rating * ((numb_rating) - 1) / numb_rating + parseFloat(req.body.rating) / numb_rating;
             place.agg_rating = new_avg;
@@ -152,7 +151,6 @@ app.post('/check-in', (req, res) => {
         });
       });
     } else {
-      console.log(req.body.placeLong, req.body.placeLat);
       const new_place = new Place({
         name: req.body.placeName,
         address: req.body.placeAddress,
@@ -172,7 +170,6 @@ app.post('/check-in', (req, res) => {
       });
       new_place.save(function (err) {
         if (err) throw err;
-        console.log("Created New Place: " + req.body.placeName);
       });
       const rating = new Rating({
         like: parseInt(req.body.rating),
@@ -200,7 +197,6 @@ app.post('/check-in', (req, res) => {
             new_place.check_ins.push(checkin);
             new_place.save(function (err) {
               if (err) throw err;
-              console.log("Saved checkin at newly created:", req.body.placeName);
               res.redirect('/check-in');
             });
           });
