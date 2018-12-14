@@ -11,6 +11,10 @@ const places = {
     place_id: "Eis0NCBXZXN0IDR0aCBTdHJlZXQsIE5ldyBZb3JrLCBOWSAxMDAxMiwgVVNBIhoSGAoUChIJHTZlZ5BZwokRGhwC1VhJe68QLA",
     lat: 40.72896069999999,
     lng: -73.9963497,
+    geo: {
+      type: "Point",
+      coordinates: [-73.9963497, 40.72896069999999]
+    },
     wifi: true,
     bathroom: true,
     quiet: false
@@ -21,6 +25,10 @@ const places = {
     place_id: "ChIJF743J5hZwokRx9ri0YoZZX0",
     lat: 40.7352741,
     lng: -73.99455269999999,
+    geo: {
+      type: "Point",
+      coordinates: [-73.99455269999999, 40.7352741]
+    },
     wifi: true,
     bathroom: false,
     quiet: true
@@ -31,6 +39,10 @@ const places = {
     place_id: "ChIJKdZtcJpZwokRl55o6EeuFo0",
     lat: 40.7301485,
     lng: -73.99407710000003,
+    geo: {
+      type: "Point",
+      coordinates: [-73.99407710000003, 40.7301485]
+    },
     wifi: false,
     bathroom: true,
     quiet: false
@@ -41,6 +53,10 @@ const places = {
     place_id: "ChIJ-aUnyZdZwokROurMS3QFqhI",
     lat: 40.7363143,
     lng: -73.99712069999998,
+    geo: {
+      type: "Point",
+      coordinates: [-73.99712069999998, 40.7363143]
+    },
     wifi: true,
     bathroom: false,
     quiet: false
