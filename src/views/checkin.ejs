@@ -1,4 +1,5 @@
 <html>
+
 <head>
   <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
   <meta charset="utf-8">
@@ -47,20 +48,16 @@
   <div id="tipList">
     You haven't selected a place yet.
   </div>
-  <!-- <div id="setLat"> -->
   <% if (locals.setLat) { %>
   <p id="innerLat">
     <%= setLat %>
   </p>
   <% } %>
-  <!-- </div> -->
-  <!-- <div id="setLong"> -->
   <% if (locals.setLong) { %>
   <p id="innerLong">
     <%= setLong %>
   </p>
   <% } %>
-  <!-- </div> -->
   <div id="spotList">
     <%- JSON.stringify(spots) %>
   </div>
