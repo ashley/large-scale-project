@@ -10,14 +10,14 @@ const Tip = mongoose.model('Tip');
 const Rating = mongoose.model('Rating');
 
 function create_user() {
-  return new Promise(function(resolve, reject) {
+  return new Promise(function (resolve, reject) {
     const name = random_name({
       first: true
     });
     const user = new User({
       name: name,
       email: name + "@gmail.com",
-      password: "BadIdea"+name
+      password: "BadIdea" + name
     });
     user.save(function (err) {
       if (err) reject(err);
@@ -29,7 +29,9 @@ function create_user() {
 
 module.exports = function (number_users, cb) {
   function wrapped_callback(errors) {
-    if (!errors) { return cb(); }
+    if (!errors) {
+      return cb();
+    }
     return cb(errors.find(error => error !== undefined));
   }
   let promises = [];

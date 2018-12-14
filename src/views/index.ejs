@@ -6,18 +6,23 @@
 </ul>
 
 <% if(spots) {%>
+<ul>
+  <% for(var i=0; i<spots.length; i++) { %>
+  <li>
+    <%= spots[i].name %>
+  </li>
   <ul>
-    <% for(var i=0; i<spots.length; i++) { %>
-      <li><%= spots[i].name %></li>
-      <ul>
-        <li><%= spots[i].check_ins %></li>
-      </ul>
-    <% } %> 
+    <li>
+      <%= spots[i].check_ins %>
+    </li>
   </ul>
+  <% } %>
+</ul>
 <% } %>
 
 <% if(user) {%>
-  <div>
-    Username: <%=user.name%>
-  </div>
+<div>
+  Username:
+  <%=user.name%>
+</div>
 <% } %>

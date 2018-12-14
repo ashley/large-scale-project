@@ -1,11 +1,10 @@
-
 let firstPlace;
 let map;
 let dbMarkers = [];
 let markers = [];
 
 function hideDBMarkers() {
-  dbMarkers.forEach(function(marker) {
+  dbMarkers.forEach(function (marker) {
     marker.setMap(null);
   });
 }
@@ -15,10 +14,10 @@ function showDBMarkers() {
   let bathroomOnly = document.getElementsByName("bathroomFilter")[0].checked;
   let quietOnly = document.getElementsByName("quietFilter")[0].checked;
 
-  dbMarkers.forEach(function(marker) {
-    if (!((wifiOnly && !marker.wifi) || (bathroomOnly && !marker.bathroom)
-      || (quietOnly && !marker.quiet))) {
-        marker.setMap(map);
+  dbMarkers.forEach(function (marker) {
+    if (!((wifiOnly && !marker.wifi) || (bathroomOnly && !marker.bathroom) ||
+        (quietOnly && !marker.quiet))) {
+      marker.setMap(map);
     }
   });
 }
@@ -30,19 +29,21 @@ function reloadDBMarkers() {
 
 function getLocation() {
   if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(function(loc) {
-      fetch('/button?lat=' + loc.coords.latitude + '&lng=' + loc.coords.longitude).then(function(response) {
+    navigator.geolocation.getCurrentPosition(function (loc) {
+      fetch('/button?lat=' + loc.coords.latitude + '&lng=' + loc.coords.longitude).then(function (response) {
         console.log("My endpoint returned!");
         console.log(loc);
         response.json().then(data => {
           console.log("Data is here");
           console.log(data);
-          map.setCenter({lat: parseFloat(data.setLat), lng: parseFloat(data.setLong)});
+          map.setCenter({
+            lat: parseFloat(data.setLat),
+            lng: parseFloat(data.setLong)
+          });
         });
       });
     });
-  }
-  else{
+  } else {
     console.log("Could not find the location.");
   }
 }
@@ -76,7 +77,9 @@ function updatePlace(place, click) {
 
 function geocodeAddress(geocoder, resultsMap) {
   let address = firstPlace.formatted_address;
-  geocoder.geocode({'address': address}, function(results, status) {
+  geocoder.geocode({
+    'address': address
+  }, function (results, status) {
     if (status === 'OK') {
       console.log('results: ', results[0]);
       let position = results[0].geometry.location;
@@ -109,19 +112,22 @@ function geocodeAddress(geocoder, resultsMap) {
   });
 }
 
-function initAutocomplete(curLat=undefined, curLong=undefined) {
-  let docLat = document.getElementById("innerLat") ? document.getElementById("innerLat").innerHTML: false;
-  if(curLat != undefined) docLat = curLat;
+function initAutocomplete(curLat = undefined, curLong = undefined) {
+  let docLat = document.getElementById("innerLat") ? document.getElementById("innerLat").innerHTML : false;
+  if (curLat != undefined) docLat = curLat;
   console.log('initAutocomplete: ', docLat)
-  let docLong = document.getElementById("innerLat") ? document.getElementById("innerLat").innerHTML: false;
-  if(curLong != undefined) docLong = curLong;
+  let docLong = document.getElementById("innerLat") ? document.getElementById("innerLat").innerHTML : false;
+  if (curLong != undefined) docLong = curLong;
   console.log('initAutocomplete: ', docLong)
   let setLat = docLat ? docLat : 40.7308;
-  let setLong = docLong ?  docLong : -73.9973;
+  let setLong = docLong ? docLong : -73.9973;
   map = new google.maps.Map(document.getElementById('map'), {
     //center: {lat: -33.8688, lng: 151.2195},
     //center: {lat: 40.7308, lng: -73.9973},
-    center: {lat: setLat, lng: setLong},
+    center: {
+      lat: setLat,
+      lng: setLong
+    },
     zoom: 15,
     mapTypeId: 'roadmap'
   });
@@ -129,8 +135,11 @@ function initAutocomplete(curLat=undefined, curLong=undefined) {
   let spots = JSON.parse(document.getElementById("spotList").innerHTML);
   console.log(spots);
 
-  spots.forEach(function(place) {
-    let position = {lat: place.lat, lng: place.lng};
+  spots.forEach(function (place) {
+    let position = {
+      lat: place.lat,
+      lng: place.lng
+    };
     let marker = new google.maps.Marker({
       map: map,
       title: place.name,
@@ -141,24 +150,24 @@ function initAutocomplete(curLat=undefined, curLong=undefined) {
       quiet: place.quiet
     });
 
-    let content = place.name + "<br>" + place.address + "<br>"
-      + "Rating: " + place.agg_rating.toFixed(2) + ", after " + place.ratings.length
-      + " reviews.";
+    let content = place.name + "<br>" + place.address + "<br>" +
+      "Rating: " + place.agg_rating.toFixed(2) + ", after " + place.ratings.length +
+      " reviews.";
     let infowindow = new google.maps.InfoWindow({
       content: content
     });
 
-    marker.addListener('click', function() {
+    marker.addListener('click', function () {
       //updatePlace will be looking from within database  
       updatePlace(place, true);
       markers.forEach(marker => marker.setMap(null));
     });
 
-    marker.addListener('mouseover', function() {
+    marker.addListener('mouseover', function () {
       infowindow.open(map, marker);
     });
 
-    marker.addListener('mouseout', function() {
+    marker.addListener('mouseout', function () {
       infowindow.close();
     })
 
@@ -179,14 +188,14 @@ function initAutocomplete(curLat=undefined, curLong=undefined) {
   map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
 
   // Bias the SearchBox results towards current map's viewport.
-  map.addListener('bounds_changed', function() {
+  map.addListener('bounds_changed', function () {
     searchBox.setBounds(map.getBounds());
   });
 
   markers = [];
   // Listen for the event fired when the user selects a prediction and retrieve
   // more details for that place.
-  searchBox.addListener('places_changed', function() {
+  searchBox.addListener('places_changed', function () {
     var places = searchBox.getPlaces();
     console.log("places: ", places)
 
@@ -195,7 +204,7 @@ function initAutocomplete(curLat=undefined, curLong=undefined) {
     }
 
     // Clear out the old markers.
-    markers.forEach(function(marker) {
+    markers.forEach(function (marker) {
       marker.setMap(null);
     });
     markers = [];
@@ -208,7 +217,7 @@ function initAutocomplete(curLat=undefined, curLong=undefined) {
 
     // For each place, get the icon, name and location.
     var bounds = new google.maps.LatLngBounds();
-    places.forEach(function(place) {
+    places.forEach(function (place) {
       if (!place.geometry) {
         console.log("Returned place contains no geometry");
         return;
@@ -235,15 +244,15 @@ function initAutocomplete(curLat=undefined, curLong=undefined) {
         content: place.name + "<br>" + place.formatted_address
       });
 
-      marker.addListener('click', function() {
+      marker.addListener('click', function () {
         updatePlace(place);
       });
 
-      marker.addListener('mouseover', function() {
+      marker.addListener('mouseover', function () {
         infowindow.open(map, marker);
       });
 
-      marker.addListener('mouseout', function() {
+      marker.addListener('mouseout', function () {
         infowindow.close();
       })
 

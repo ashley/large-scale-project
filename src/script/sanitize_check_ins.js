@@ -10,19 +10,19 @@ const Rating = mongoose.model('Rating');
 
 const tips = ["This place is sick", "Much greatness", "If you turn on the light, it beomces brighter"];
 
-function create_checkin(user, place){
+function create_checkin(user, place) {
   const rating = new Rating({
-    like: Math.floor(Math.random()* 3 -1),
+    like: Math.floor(Math.random() * 3 - 1),
     rater: user
   });
-  rating.save(function (rating_err){
-    if(rating_err) throw err;
+  rating.save(function (rating_err) {
+    if (rating_err) throw err;
     const tip = new Tip({
-      comment: tips[Math.floor(Math.random()*tips.length)],
+      comment: tips[Math.floor(Math.random() * tips.length)],
       tipper: user
     });
-    tip.save(function (tip_err){
-      if(tip_err) throw err;
+    tip.save(function (tip_err) {
+      if (tip_err) throw err;
       const checkin = new CheckIn({
         spot: place,
         user: user,
@@ -30,12 +30,12 @@ function create_checkin(user, place){
         tip: tip,
         rating: rating
       });
-      checkin.save(function (err){
+      checkin.save(function (err) {
         if (err) throw err;
         place.ratings.push(rating);
         place.tips.push(tip);
         place.check_ins.push(checkin);
-        place.save(function (err){
+        place.save(function (err) {
           if (err) throw err;
           console.log("Saved checkin for ", user.name, " at ", place.name);
         });

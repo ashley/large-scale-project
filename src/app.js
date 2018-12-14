@@ -25,7 +25,9 @@ app.set('view engine', 'ejs');
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'views')));
 app.set('views', path.join(__dirname, 'views'));
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({
+  extended: false
+}));
 app.use(bodyParser.json());
 
 
@@ -38,28 +40,36 @@ app.get('/button', (req, res) => {
   console.log(req.query);
   Place.find({
     geo: {
-     $near: {
-      $maxDistance: 2000,
-      $geometry: {
-       type: "Point",
-       coordinates: [req.query.lng, req.query.lat]
+      $near: {
+        $maxDistance: 2000,
+        $geometry: {
+          type: "Point",
+          coordinates: [req.query.lng, req.query.lat]
+        }
       }
-     }
     }
-   }).find((error, results) => {
+  }).find((error, results) => {
     if (error) console.log(error);
     console.log(results);
-    const new_data = {spots: results, setLat: req.query.lat, setLong: req.query.lng};
+    const new_data = {
+      spots: results,
+      setLat: req.query.lat,
+      setLong: req.query.lng
+    };
     res.json(new_data);
-   });
+  });
 })
 app.get('/check-in', (req, res) => {
   // load spots
   Place.find({}, (err, places, count) => {
-    if(places){
-      res.render('checkin', {spots: places, setLat: false, setLong: false});
+    if (places) {
+      res.render('checkin', {
+        spots: places,
+        setLat: false,
+        setLong: false
+      });
     }
-    if(err){
+    if (err) {
       throw err; //for now
     }
   })
@@ -86,10 +96,12 @@ app.post('/check-in', (req, res) => {
   User.findOne({}, (err, userFound, count) => {
     if (err) throw err;
     if (userFound) {
-      user=userFound;
+      user = userFound;
     }
   });
-  Place.findOne({place_id: req.body.placeGoogleId}, (err, place, count) => {
+  Place.findOne({
+    place_id: req.body.placeGoogleId
+  }, (err, place, count) => {
     if (err) throw err;
     if (place) {
       console.log('lil buddy: ', place)
@@ -98,21 +110,21 @@ app.post('/check-in', (req, res) => {
         like: parseInt(req.body.rating),
         rater: user
       });
-      rating.save(function (rating_err){
-        if(rating_err) throw err;
+      rating.save(function (rating_err) {
+        if (rating_err) throw err;
         const tip = new Tip({
           comment: req.body.tip,
           tipper: user
         });
-        tip.save(function (tip_err){
-          if(tip_err) throw err;
+        tip.save(function (tip_err) {
+          if (tip_err) throw err;
           const checkin = new CheckIn({
             spot: place,
             time: new Date(Date.now()),
             tip: tip,
             rating: rating
           });
-          checkin.save(function (err){
+          checkin.save(function (err) {
             if (err) throw err;
             //only write to database if true to override possible false value
             if (wifiVal) {
@@ -124,22 +136,22 @@ app.post('/check-in', (req, res) => {
             if (bathroomVal) {
               place.bathroom = true;
             }
-            
+
             console.log('old avg: ', place.agg_rating)
-            let numb_rating = place.tips.length+1;
-            let new_avg = place.agg_rating * ((numb_rating)-1)/numb_rating + parseFloat(req.body.rating)/numb_rating;
+            let numb_rating = place.tips.length + 1;
+            let new_avg = place.agg_rating * ((numb_rating) - 1) / numb_rating + parseFloat(req.body.rating) / numb_rating;
             place.agg_rating = new_avg;
             place.ratings.push(rating);
             place.tips.push(tip);
             place.check_ins.push(checkin);
-            place.save(function (err){
+            place.save(function (err) {
               if (err) throw err;
               res.redirect('/check-in');
             });
           });
         });
       });
-    } else { 
+    } else {
       console.log(req.body.placeLong, req.body.placeLat);
       const new_place = new Place({
         name: req.body.placeName,
@@ -147,7 +159,7 @@ app.post('/check-in', (req, res) => {
         place_id: req.body.placeGoogleId,
         lat: req.body.placeLat,
         lng: req.body.placeLong,
-        geo: { 
+        geo: {
           type: "Point",
           coordinates: [Number(req.body.placeLong), Number(req.body.placeLat)]
         },
@@ -166,27 +178,27 @@ app.post('/check-in', (req, res) => {
         like: parseInt(req.body.rating),
         rater: user
       });
-      rating.save(function (rating_err){
-        if(rating_err) throw err;
+      rating.save(function (rating_err) {
+        if (rating_err) throw err;
         const tip = new Tip({
           comment: req.body.tip,
           tipper: user
         });
-        tip.save(function (tip_err){
-          if(tip_err) throw err;
+        tip.save(function (tip_err) {
+          if (tip_err) throw err;
           const checkin = new CheckIn({
             spot: new_place,
             time: new Date(Date.now()),
             tip: tip,
             rating: rating
           });
-          checkin.save(function (err){
+          checkin.save(function (err) {
             if (err) throw err;
             new_place.agg_rating = parseInt(req.body.rating);
             new_place.ratings.push(rating);
             new_place.tips.push(tip);
             new_place.check_ins.push(checkin);
-            new_place.save(function (err){
+            new_place.save(function (err) {
               if (err) throw err;
               console.log("Saved checkin at newly created:", req.body.placeName);
               res.redirect('/check-in');
@@ -215,7 +227,9 @@ if (nconf.get('mongoDatabase')) {
 // To continue working locally - 
 // replace mlabURI in mongoose.connect() with devURI, already initalized above
 console.log(mlabURI)
-mongoose.connect(devURI, {useNewUrlParser: true} , function (err, db) {
+mongoose.connect(devURI, {
+  useNewUrlParser: true
+}, function (err, db) {
   console.log('Connected to MongoDB');
   const collection_names = Object.keys(db.collections);
   app.listen(8080, function () {
