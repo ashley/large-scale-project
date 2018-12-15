@@ -14,8 +14,8 @@
     <input type="checkbox" name="bathroomFilter" onchange="reloadDBMarkers()"> Public Bathroom<br>
     <input type="checkbox" name="quietFilter" onchange="reloadDBMarkers()"> Quiet Place<br>
   </div>
-  <input id="pac-input" class="controls" type="text" placeholder="Search Box">
   <div id="map"></div>
+  <input id="pac-input" class="controls" type="text" placeholder="Search Box">
   <div>
     <img src="/images/my_location_icon.png" width="35" align="middle">
     <b>=</b>
@@ -24,8 +24,7 @@
   <br>
   <form method="POST" action="">
     <div id='placeName'>Your Chosen Place Name: </div>
-    <!-- make place required but place is a hidden field?-->
-    <input type="text" name='placeName' id="placeNameInput" value="you must click on a pin">
+    <input type="text" name='placeName' id="placeNameInput" value="Click on pin or use search bar on map!">
     <br>
     <div id='placeAddress'>Your Chosen Place Address: </div>
     <input type="text" name='placeAddress' id="placeAddressInput" readonly="">
@@ -49,10 +48,6 @@
     <br><br>
     <input type="submit" id="submitButton" value="Submit">
   </form>
-  Tips: <br>
-  <div id="tipList">
-    You haven't selected a place yet.
-  </div>
   <% if (locals.setLat) { %>
   <p id="innerLat">
     <%= setLat %>
@@ -71,4 +66,4 @@
     async defer></script>
 </body>
 
-</html>>
+</html>

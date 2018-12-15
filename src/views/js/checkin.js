@@ -2,6 +2,7 @@ let firstPlace;
 let map;
 let dbMarkers = [];
 let markers = [];
+let input;
 
 function hideDBMarkers() {
   dbMarkers.forEach(function (marker) {
@@ -32,10 +33,9 @@ function getLocation() {
     navigator.geolocation.getCurrentPosition(function (loc) {
       fetch('/button?lat=' + loc.coords.latitude + '&lng=' + loc.coords.longitude).then(function (response) {
         response.json().then(data => {
-          map.setCenter({
-            lat: parseFloat(data.setLat),
-            lng: parseFloat(data.setLong)
-          });
+          hideDBMarkers();
+          dbMarkers = [];
+          map.setCenter({lat: parseFloat(data.setLat), lng: parseFloat(data.setLong)});
           marker = new google.maps.Marker({
             position: new google.maps.LatLng(data.setLat, data.setLong),
             icon: {
@@ -44,6 +44,44 @@ function getLocation() {
             },
             map: map
           });
+          map.setZoom(15);
+          data.spots.forEach(function(place) {
+            let position = {lat: place.lat, lng: place.lng};
+            let marker = new google.maps.Marker({
+              map: map,
+              title: place.name,
+              position: position,
+              place_id: place.place_id,
+              wifi: place.wifi,
+              bathroom: place.bathroom,
+              quiet: place.quiet
+            });
+            console.log('marker in geolocation: ', marker)
+        
+            let content = place.name + "<br>" + place.address + "<br>"
+              + "Rating: " + place.agg_rating.toFixed(2) + ", after " + place.ratings.length
+              + " reviews.";
+            let infowindow = new google.maps.InfoWindow({
+              content: content
+            });
+        
+            marker.addListener('click', function() {
+              updatePlace(place, true);
+              markers.forEach(marker => marker.setMap(null));
+            });
+        
+            marker.addListener('mouseover', function() {
+              infowindow.open(map, marker);
+            });
+        
+            marker.addListener('mouseout', function() {
+              infowindow.close();
+            })
+            dbMarkers.push(marker);
+          });
+          reloadDBMarkers();
+        
+        
         });
       });
     });
@@ -56,6 +94,10 @@ function updatePlace(place, click) {
   document.getElementById("placeNameInput").setAttribute('value', firstPlace.name);
   if (click) {
     document.getElementById("placeAddressInput").setAttribute('value', firstPlace.address);
+    document.getElementById("placeGoogleId").setAttribute('value', firstPlace.place_id);
+    document.getElementById("placeLat").setAttribute('value', obj.lat);
+    document.getElementById("placeLong").setAttribute('value', obj.lng);
+
   } else {
     document.getElementById("placeAddressInput").setAttribute('value', firstPlace.formatted_address);
   }
@@ -82,23 +124,27 @@ function geocodeAddress(geocoder, resultsMap) {
   });
 }
 
-function initAutocomplete(curLat = undefined, curLong = undefined) {
-  let docLat = document.getElementById("innerLat") ? document.getElementById("innerLat").innerHTML : false;
-  if (curLat != undefined) docLat = curLat;
-  let docLong = document.getElementById("innerLat") ? document.getElementById("innerLat").innerHTML : false;
-  if (curLong != undefined) docLong = curLong;
-  let setLat = docLat ? docLat : 40.7308;
-  let setLong = docLong ? docLong : -73.9973;
+function initAutocomplete(curLat=undefined, curLong=undefined, spotsParam=undefined, zoomParamF=undefined) {
+  let zoomParam = zoomParamF;
+  let docLat = document.getElementById("innerLat") ? parseFloat(document.getElementById("innerLat").innerHTML) : false;
+  if(curLat != undefined) docLat = curLat;
+  console.log('initAutocomplete: ', docLat)
+
+  let docLong = document.getElementById("innerLong") ? parseFloat(document.getElementById("innerLong").innerHTML): false;
+  if(curLong != undefined) docLong = curLong;
+  console.log('initAutocomplete: ', docLong)
+  let setLat = docLat ? docLat : 40.74712183257553; //queens i think
+  let setLong = docLong ?  docLong : -73.86656910181047; //queens i think
   map = new google.maps.Map(document.getElementById('map'), {
-    center: {
-      lat: setLat,
-      lng: setLong
-    },
-    zoom: 15,
+    center: {lat: setLat, lng: setLong},
+    zoom: zoomParam ? zoomParam : 13,
     mapTypeId: 'roadmap'
   });
-
   let spots = JSON.parse(document.getElementById("spotList").innerHTML);
+  if (spotsParam != undefined) {
+    //map.setCenter({lat: parseFloat(data.setLat), lng: parseFloat(data.setLong)});
+    spots = spotsParam;
+  }
 
   spots.forEach(function (place) {
     let position = {
@@ -118,10 +164,7 @@ function initAutocomplete(curLat = undefined, curLong = undefined) {
     let content = place.name + "<br>" + place.address + "<br>" +
       "Rating: " + place.agg_rating.toFixed(2) + ", after " + place.ratings.length +
       " reviews.";
-    let infowindow = new google.maps.InfoWindow({
-      content: content
     });
-
     marker.addListener('click', function () {
       updatePlace(place, true);
       markers.forEach(marker => marker.setMap(null));
@@ -133,15 +176,15 @@ function initAutocomplete(curLat = undefined, curLong = undefined) {
 
     marker.addListener('mouseout', function () {
       infowindow.close();
-    })
-
+    });
     dbMarkers.push(marker);
   });
 
   reloadDBMarkers();
 
   // Create the search box and link it to the UI element.
-  var input = document.getElementById('pac-input');
+  let inputHere = document.getElementById('inputHere');
+  input = document.getElementById('pac-input');
   var searchBox = new google.maps.places.SearchBox(input);
   map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
 
@@ -155,7 +198,6 @@ function initAutocomplete(curLat = undefined, curLong = undefined) {
   // more details for that place.
   searchBox.addListener('places_changed', function () {
     var places = searchBox.getPlaces();
-    console.log("places: ", places)
 
     if (places.length == 0) {
       return;

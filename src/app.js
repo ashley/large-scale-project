@@ -26,6 +26,10 @@ app.use(bodyParser.urlencoded({
 }));
 app.use(bodyParser.json());
 
+// let queryExist = req.query;
+// let queryLat = req.query.lat ? req.query.lat : 40.77124965436669;
+// let queryLong = req.query.long ? req.query.long : -73.95872561261059;
+
 
 // Routing
 app.get('/', (req, res) => {
@@ -47,30 +51,51 @@ app.get('/button', (req, res) => {
     }
   }).find((error, results) => {
     if (error) console.log(error);
-    // 2. Sorts query into data for front-end
-    const new_data = {
-      spots: results,
-      setLat: req.query.lat,
-      setLong: req.query.lng
-    };
-    // 3. Gets passed to the front-end
+    console.log('button results: ', results);
+    //kinda working
+    //const new_data = {spots: results, setLat: req.query.lat, setLong: req.query.lng};
+    let queryLat = req.query.lat ? req.query.lat : 40.77124965436669;
+    let queryLong = req.query.long ? req.query.long : -73.95872561261059;
+    const new_data = {spots: results, setLat: queryLat, setLong: queryLong};
     res.json(new_data);
-  });
+    //res.render('checkin', {spots: results, setLat: req.query.lat, setLong: req.query.lng});
+   });
 })
 
 app.get('/check-in', (req, res) => {
-  Place.find({}, (err, places, count) => {
-    if (places) {
-      res.render('checkin', {
-        spots: places,
-        setLat: false,
-        setLong: false
-      });
+  // load spots
+  // load upper east side on app load
+  // upper lat: 40.77124965436669
+  // upper long: -73.95872561261059
+  Place.find({
+    geo: {
+     $near: {
+      $maxDistance: 6000,
+      $geometry: {
+       type: "Point",
+       coordinates: [-73.98383527994157, 40.75560910351759]
+      }
+     }
     }
-    if (err) {
-      throw err; //for now
-    }
-  })
+   }).find((error, results) => {
+    if (error) console.log(error);
+    console.log('upper east: ', typeof(results));
+    let queryLat = req.query.lat ? req.query.lat : 40.75560910351759;
+    let queryLong = req.query.long ? req.query.long : -73.98383527994157;
+    res.render('checkin', {spots: results, setLat: queryLat, setLong: queryLong});
+    //res.render('checkin', {spots: results, setLat: 40.77124965436669, setLong: -73.95872561261059});
+    //const new_data = {spots: results, setLat: 40.77124965436669, setLong: -73.95872561261059};
+    //res.json(new_data);
+   });
+  // Place.find({}, (err, places, count) => {
+  //   if(places){
+  //     console.log('in places', typeof(places))
+  //     res.render('checkin', {spots: places, setLat: false, setLong: false});
+  //   }
+  //   if(err){
+  //     throw err; //for now
+  //   }
+  // })
 });
 
 app.post('/check-in', (req, res) => {
@@ -157,9 +182,9 @@ app.post('/check-in', (req, res) => {
           type: "Point",
           coordinates: [Number(req.body.placeLong), Number(req.body.placeLat)]
         },
-        wifi: req.body.wifi ? true : false,
-        bathroom: req.body.bathroom ? true : false,
-        quiet: req.body.quiet ? true : false,
+        wifi: wifiVal ? true : false,
+        bathroom: bathroomVal ? true : false,
+        quiet: quietVal ? true : false,
         ratings: [],
         tips: [],
         check_ins: []
