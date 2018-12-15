@@ -164,6 +164,8 @@ function initAutocomplete(curLat=undefined, curLong=undefined, spotsParam=undefi
     let content = place.name + "<br>" + place.address + "<br>" +
       "Rating: " + place.agg_rating.toFixed(2) + ", after " + place.ratings.length +
       " reviews.";
+    let infowindow = new google.maps.InfoWindow({
+      content: content
     });
     marker.addListener('click', function () {
       updatePlace(place, true);

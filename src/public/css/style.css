@@ -18,6 +18,18 @@
   border: none;
 }
 
+#innerLat {
+  display: none;
+  outline: none;
+  border: none;
+}
+
+#innerLong {
+  display: none;
+  outline: none;
+  border: none;
+}
+
 #placeLat {
   display: none;
   outline: none;
