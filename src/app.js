@@ -244,11 +244,10 @@ if (nconf.get('mongoDatabase')) {
 // To continue working locally - 
 // replace mlabURI in mongoose.connect() with devURI, already initalized above
 console.log(mlabURI)
-mongoose.connect(devURI, {
+mongoose.connect(mlabURI, {
   useNewUrlParser: true
 }, function (err, db) {
   console.log('Connected to MongoDB');
-  const collection_names = Object.keys(db.collections);
   app.listen(8080, function () {
     console.log("Running server on localhost:8080");
   });
