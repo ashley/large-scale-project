@@ -64,7 +64,7 @@ const places = {
 }
 
 function create_place(place) {
-  return new Promise( function(resolve, reject){
+  return new Promise(function (resolve, reject) {
     const new_place = new Place({
       name: place.name,
       address: place.address,
@@ -89,11 +89,13 @@ function create_place(place) {
 
 module.exports = function (cb) {
   function wrapped_callback(errors) {
-    if (!errors) { return cb(); }
+    if (!errors) {
+      return cb();
+    }
     return cb(errors.find(error => error !== undefined));
   }
   let promises = [];
-  for(let i in places){
+  for (let i in places) {
     promises.push(create_place(places[i]));
   }
   Promise.all(promises).then(wrapped_callback, wrapped_callback);
