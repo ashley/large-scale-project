@@ -14,6 +14,12 @@
     <input type="checkbox" name="bathroomFilter" onchange="reloadDBMarkers()"> Public Bathroom<br>
     <input type="checkbox" name="quietFilter" onchange="reloadDBMarkers()"> Quiet Place<br>
   </div>
+
+  <div id="filterRate">
+    Filter current makrers by rating: <br>
+    <input type="checkbox" name="wifiFilter" onclick="loadRatings(this)"> Rating<br>
+  </div>
+  <ol id='rating'></ol>
   <div id="map"></div>
   <input id="pac-input" class="controls" type="text" placeholder="Search Box">
   <div>

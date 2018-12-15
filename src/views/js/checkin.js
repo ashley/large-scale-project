@@ -28,6 +28,25 @@ function reloadDBMarkers() {
   showDBMarkers();
 }
 
+function loadRatings(cb) {
+  let unorderedList = document.getElementById('rating');
+  if (cb.checked) {
+    let keysSorted = Object.keys(dbMarkers).sort(function(a,b){
+      return (dbMarkers[a].agg_rating)-(dbMarkers[b].agg_rating);
+    })
+    console.log('keys', keysSorted);
+    for (let i = 0; i < keysSorted.length; i++) {
+      var li = document.createElement("LI");
+      li.innerHTML = 'Place: ' + dbMarkers[keysSorted[i]].title + ' - Average rating: ' + dbMarkers[keysSorted[i]].agg_rating;      // Create a text node
+      unorderedList.appendChild(li);
+    }
+  } else {
+    while (unorderedList.firstChild) {
+      unorderedList.removeChild(unorderedList.firstChild);
+    }
+  }
+}
+
 function getLocation() {
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(function (loc) {
@@ -50,6 +69,7 @@ function getLocation() {
             let marker = new google.maps.Marker({
               map: map,
               title: place.name,
+              agg_rating: place.agg_rating,
               position: position,
               place_id: place.place_id,
               wifi: place.wifi,
@@ -153,6 +173,7 @@ function initAutocomplete(curLat=undefined, curLong=undefined, spotsParam=undefi
     };
     let marker = new google.maps.Marker({
       map: map,
+      agg_rating: place.agg_rating,
       title: place.name,
       position: position,
       place_id: place.place_id,
